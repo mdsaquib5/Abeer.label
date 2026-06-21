@@ -106,11 +106,13 @@ export const getProducts = async (req, res) => {
             query.isFeatured = true;
         }
 
-        if (status) {
+        if (status && status !== "all") {
             query.status = status;
-        } else {
+        } else if (!status) {
+            // Public-facing default: only published
             query.status = "published";
         }
+        // if status === "all", no filter is applied (admin use)
 
         let sortOption = {
             createdAt: -1,

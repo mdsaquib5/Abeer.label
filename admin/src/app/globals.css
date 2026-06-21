@@ -737,6 +737,9 @@ input[type="number"] {
 .product-stock {
     font-weight: 400;
     color: var(--text-light);
+    display: flex;
+    gap: 6px;
+    align-items: center;
 }
 
 .product-actions {

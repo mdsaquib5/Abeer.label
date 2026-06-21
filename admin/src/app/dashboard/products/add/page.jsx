@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import DashboardTitles from "@/components/layout/DashboardTitles";
 import { BsCloudUpload, BsPlusLg, BsTrash } from "react-icons/bs";
 import { toast } from "sonner";
-import api from "@/lib/api";
+import { createProduct } from "@/lib/productApi";
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL", "2XL"];
 const CATEGORIES = ["Ethnic Dresses", "Farshi Salwars Collection", "Kurti Sets"];
@@ -145,11 +145,7 @@ export default function AddProductPage() {
                 formData.append("video", video);
             }
 
-            const { data } = await api.post("/products", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const data = await createProduct(formData);
 
             if (data.success) {
                 toast.success("Product published successfully! 🛍️", { id: toastId });
