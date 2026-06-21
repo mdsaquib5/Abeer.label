@@ -5,8 +5,6 @@ const mongoConnection = async () => {
         console.log('MongoDB Connected Successfully!');
     });
 
-    // I changed maatikalaa to abeer-label to match your project name. 
-    // If you specifically want 'maatikalaa', you can change it back.
     await mongoose.connect(`${process.env.MONGO_URI}/abeer-label`);
 }
 
