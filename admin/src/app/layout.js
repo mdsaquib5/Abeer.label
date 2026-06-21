@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./layout.css";
 import "./globals.css";
 import "./responsive.css";
+import AuthInit from "@/components/layout/AuthInit";
 
 export const metadata = {
   title: "ABEER.LABEL – Dashboard",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" style={{ scrollBehavior: 'smooth' }}>
       <body className={`${outfit.variable} ${sacramento.variable} ${cinzel.variable} ${khand.variable} ${outfit.className}`}>
+        <AuthInit />
         {children}
         <Toaster
           position="top-right"

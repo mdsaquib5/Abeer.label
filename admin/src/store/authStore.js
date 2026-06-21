@@ -12,13 +12,13 @@ const useAuthStore = create(
       isLoading: false,
       error: null,
 
-      // ─── SIGNUP ─────────────────────────────────────────────────────────────
+      // ─── SIGNUP (Request Access) ────────────────────────────────────────────
       signup: async ({ name, email, password }) => {
         set({ isLoading: true, error: null });
         try {
-          const { data } = await api.post("/user/signup", { name, email, password });
+          const { data } = await api.post("/admin/signup", { name, email, password });
 
-          localStorage.setItem("abeer-user-token", data.data.token);
+          localStorage.setItem("abeer-admin-token", data.data.token);
 
           set({
             token: data.data.token,
@@ -39,9 +39,9 @@ const useAuthStore = create(
       login: async ({ email, password }) => {
         set({ isLoading: true, error: null });
         try {
-          const { data } = await api.post("/user/login", { email, password });
+          const { data } = await api.post("/admin/login", { email, password });
 
-          localStorage.setItem("abeer-user-token", data.data.token);
+          localStorage.setItem("abeer-admin-token", data.data.token);
 
           set({
             token: data.data.token,
@@ -61,28 +61,28 @@ const useAuthStore = create(
       // ─── LOGOUT ─────────────────────────────────────────────────────────────
       logout: async () => {
         try {
-          await api.post("/user/logout");
+          await api.post("/admin/logout");
         } catch (_) {
           // Even if API fails, clear local state
         } finally {
-          localStorage.removeItem("abeer-user-token");
+          localStorage.removeItem("abeer-admin-token");
           set({ token: null, user: null, isAuthenticated: false, error: null });
         }
       },
 
-      // ─── GET CURRENT USER ───────────────────────────────────────────────────
+      // ─── GET CURRENT ADMIN ──────────────────────────────────────────────────
       fetchMe: async () => {
-        const token = get().token || (typeof window !== "undefined" && localStorage.getItem("abeer-user-token"));
+        const token = get().token || (typeof window !== "undefined" && localStorage.getItem("abeer-admin-token"));
         if (!token) return;
 
         set({ isLoading: true });
         try {
-          const { data } = await api.get("/user/me");
+          const { data } = await api.get("/admin/me");
           set({ user: data.data, isAuthenticated: true, isLoading: false });
         } catch (_) {
           // Token expired — clear everything
           if (typeof window !== "undefined") {
-            localStorage.removeItem("abeer-user-token");
+            localStorage.removeItem("abeer-admin-token");
           }
           set({ token: null, user: null, isAuthenticated: false, isLoading: false });
         }
@@ -92,7 +92,7 @@ const useAuthStore = create(
       clearError: () => set({ error: null }),
     }),
     {
-      name: "abeer-auth",                           // persisted in localStorage
+      name: "abeer-admin-auth",                      // persisted in localStorage
       partialize: (state) => ({                     // only persist these fields
         token: state.token,
         user: state.user,

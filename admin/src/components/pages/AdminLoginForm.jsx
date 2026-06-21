@@ -4,14 +4,61 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BsShieldLock } from 'react-icons/bs';
+import { toast } from 'sonner';
+import useAuthStore from '@/store/authStore';
 
 const AdminLoginForm = () => {
     const [isLogin, setIsLogin] = useState(true);
     const router = useRouter();
+    const { login, signup, isLoading, clearError } = useAuthStore();
 
-    const handleLogin = (e) => {
+    // Form states
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const [signupData, setSignupData] = useState({ name: '', email: '', password: '' });
+
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        router.push('/dashboard');
+        clearError();
+
+        const result = await login({
+            email: loginData.email,
+            password: loginData.password,
+        });
+
+        if (result.success) {
+            toast.success("Welcome back! Dashboard is ready. 👋");
+            router.push('/dashboard');
+        } else {
+            toast.error(result.message);
+        }
+    };
+
+    const handleSignupSubmit = async (e) => {
+        e.preventDefault();
+        clearError();
+
+        const result = await signup({
+            name: signupData.name,
+            email: signupData.email,
+            password: signupData.password,
+        });
+
+        if (result.success) {
+            toast.success("Admin access granted and account created successfully! 🎉");
+            router.push('/dashboard');
+        } else {
+            toast.error(result.message);
+        }
+    };
+
+    const switchToSignup = () => {
+        clearError();
+        setIsLogin(false);
+    };
+
+    const switchToLogin = () => {
+        clearError();
+        setIsLogin(true);
     };
 
     return (
@@ -19,6 +66,7 @@ const AdminLoginForm = () => {
             <div className='container'>
                 <div className={`admin-auth-card ${isLogin ? '' : 'is-flipped'}`}>
 
+                    {/* Front: Login */}
                     <div className="admin-auth-face admin-auth-front glass-panel">
                         <div className="admin-auth-header">
                             <div className="admin-auth-icon-wrap">
@@ -30,14 +78,30 @@ const AdminLoginForm = () => {
                             </p>
                         </div>
 
-                        <form className="admin-auth-form" onSubmit={handleLogin}>
+                        <form className="admin-auth-form" onSubmit={handleLoginSubmit}>
                             <div className="admin-form-group">
                                 <label>Email Address</label>
-                                <input type="email" placeholder="admin@abeerlabel.com" className="admin-auth-input" required />
+                                <input
+                                    type="email"
+                                    placeholder="admin@abeerlabel.com"
+                                    className="admin-auth-input"
+                                    required
+                                    value={loginData.email}
+                                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="admin-form-group">
                                 <label>Password</label>
-                                <input type="password" placeholder="••••••••" className="admin-auth-input" required />
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="admin-auth-input"
+                                    required
+                                    value={loginData.password}
+                                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="admin-auth-actions">
                                 <label className="admin-auth-remember">
@@ -46,16 +110,22 @@ const AdminLoginForm = () => {
                                 </label>
                                 <Link href="#" className="admin-auth-forgot">Forgot Password?</Link>
                             </div>
-                            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
-                                Sign In to Dashboard
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "Signing In..." : "Sign In to Dashboard"}
                             </button>
                         </form>
 
                         <div className="admin-auth-footer">
-                            <p>Need access? <button onClick={() => setIsLogin(false)} className="admin-auth-toggle-btn">Request here</button></p>
+                            <p>Need access? <button onClick={switchToSignup} className="admin-auth-toggle-btn">Request here</button></p>
                         </div>
                     </div>
 
+                    {/* Back: Signup */}
                     <div className="admin-auth-face admin-auth-back glass-panel">
                         <div className="admin-auth-header">
                             <div className="admin-auth-icon-wrap">
@@ -67,26 +137,55 @@ const AdminLoginForm = () => {
                             </p>
                         </div>
 
-                        <form className="admin-auth-form" onSubmit={(e) => { e.preventDefault(); setIsLogin(true); }}>
+                        <form className="admin-auth-form" onSubmit={handleSignupSubmit}>
                             <div className="admin-form-group">
                                 <label>Full Name</label>
-                                <input type="text" placeholder="Your full name" className="admin-auth-input" required />
+                                <input
+                                    type="text"
+                                    placeholder="Your full name"
+                                    className="admin-auth-input"
+                                    required
+                                    value={signupData.name}
+                                    onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="admin-form-group">
                                 <label>Email Address</label>
-                                <input type="email" placeholder="admin@abeerlabel.com" className="admin-auth-input" required />
+                                <input
+                                    type="email"
+                                    placeholder="admin@abeerlabel.com"
+                                    className="admin-auth-input"
+                                    required
+                                    value={signupData.email}
+                                    onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="admin-form-group">
                                 <label>Password</label>
-                                <input type="password" placeholder="••••••••" className="admin-auth-input" required />
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="admin-auth-input"
+                                    required
+                                    value={signupData.password}
+                                    onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                                    disabled={isLoading}
+                                />
                             </div>
-                            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
-                                Submit Request
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "Submitting Request..." : "Submit Request"}
                             </button>
                         </form>
 
                         <div className="admin-auth-footer">
-                            <p>Already have access? <button onClick={() => setIsLogin(true)} className="admin-auth-toggle-btn">Sign In</button></p>
+                            <p>Already have access? <button onClick={switchToLogin} className="admin-auth-toggle-btn">Sign In</button></p>
                         </div>
                     </div>
 

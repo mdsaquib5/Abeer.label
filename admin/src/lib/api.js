@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('abeer-admin-token');
-                window.location.href = '/login';
+                window.location.href = '/';
             }
         }
         return Promise.reject(error);

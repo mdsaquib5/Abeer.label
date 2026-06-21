@@ -416,8 +416,17 @@
     align-items: start;
 }
 
-.left-column .glass-panel:last-child {
+.left-column .glass-panel:nth-last-child(2) {
     margin-top: 20px;
+}
+
+.uploader-panel {
+    position: sticky;
+    top: 20px;
+}
+
+.right-column {
+    align-self: stretch;
 }
 
 .product-form-group {

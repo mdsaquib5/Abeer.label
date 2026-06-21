@@ -78,7 +78,7 @@ const Hero = () => {
                                             fill
                                             sizes="(max-width: 576px) 100vw, 50vw"
                                             style={{ objectFit: 'cover', objectPosition: slide.objectPosition }}
-                                            priority={slide.id === 1}
+                                            priority={slide.id === 1 || slide.id === 2}
                                         />
                                     </div>
                                 </div>

@@ -2,19 +2,17 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user.js';
+import adminRoutes from './routes/admin.js';
+import productRoutes from './routes/product.js';
 
 const app = express();
 
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
-// CORS configuration
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    process.env.ADMIN_URL    || 'http://localhost:3001',
-];
+    process.env.FRONTEND_URL,
+    process.env.ADMIN_URL,
+    'http://localhost:3000',
+    'http://localhost:3001',
+].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -27,6 +25,11 @@ app.use(cors({
     credentials: true,
 }));
 
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 // Basic route to test API
 app.get('/api', (req, res) => {
     res.status(200).json({
@@ -37,6 +40,8 @@ app.get('/api', (req, res) => {
 
 // API Routes
 app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/products', productRoutes);
 
 // Root route
 app.get('/', (req, res) => {

@@ -1,13 +1,21 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userSchema.js";
+import Admin from "../models/adminSchema.js";
 
-export const protect = (allowedRoles = []) => async (req, res, next) => {
+export const protect = (...allowedRoles) => async (req, res, next) => {
     try {
         let token;
-        const authHeader = req.headers.authorization;
 
-        if (authHeader && authHeader.startsWith("Bearer ")) {
-            token = authHeader.split(" ")[1];
+        // Check cookies first (admin-token cookie or regular token cookie)
+        if (req.cookies && (req.cookies["admin-token"] || req.cookies.token)) {
+            token = req.cookies["admin-token"] || req.cookies.token;
+        }
+        // Fallback to Authorization header
+        else {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith("Bearer ")) {
+                token = authHeader.split(" ")[1];
+            }
         }
 
         if (!token) {
@@ -19,12 +27,14 @@ export const protect = (allowedRoles = []) => async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await User.findById(decoded.userId).select("-password");
+        // Query Admin collection for admin tokens, User collection for customer tokens
+        const Model = decoded.source === "admin" ? Admin : User;
+        const user = await Model.findById(decoded.userId).select("-password");
 
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "User not found",
+                message: "Account not found",
             });
         }
 
@@ -35,7 +45,7 @@ export const protect = (allowedRoles = []) => async (req, res, next) => {
             });
         }
 
-        // Check Roles if any are specified
+        // Check roles if specified
         if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
             return res.status(403).json({
                 success: false,

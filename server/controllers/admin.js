@@ -1,9 +1,10 @@
-import User from "../models/userSchema.js";
 import bcrypt from "bcrypt";
+import Admin from "../models/adminSchema.js";
 import { generateToken } from "../utils/token.js";
 
-// signup 
-export const signup = async (req, res) => {
+// admin signup
+
+export const adminSignup = async (req, res) => {
     try {
         const { name, email, password } = req.body || {};
 
@@ -22,9 +23,11 @@ export const signup = async (req, res) => {
             });
         }
 
-        const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+        const existingAdmin = await Admin.findOne({
+            email: email.toLowerCase().trim(),
+        });
 
-        if (existingUser) {
+        if (existingAdmin) {
             return res.status(400).json({
                 success: false,
                 message: "Email already registered",
@@ -33,15 +36,17 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        const user = await User.create({
+        const admin = await Admin.create({
             name: name.trim(),
             email: email.toLowerCase().trim(),
             password: hashedPassword,
+            role: "admin",
         });
 
-        const token = generateToken(user._id, user.role);
+        // Generate token immediately after signup
+        const token = generateToken(admin._id, admin.role, "admin");
 
-        res.cookie("token", token, {
+        res.cookie("admin-token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -50,32 +55,31 @@ export const signup = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "Account created successfully",
+            message: "Admin account created successfully",
             data: {
                 token,
                 user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
+                    id: admin._id,
+                    name: admin.name,
+                    email: admin.email,
+                    role: admin.role,
                 },
             },
         });
     } catch (error) {
-        console.error("Signup Error:", error.message);
-        res.status(500).json({
+        console.error("Admin Signup Error:", error.message);
+        return res.status(500).json({
             success: false,
-            message: "Internal server error",
+            message: "Server error",
         });
     }
 };
 
-// login
-export const login = async (req, res) => {
+// admin login
+export const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body || {};
 
-        // Input validation
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -83,35 +87,38 @@ export const login = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ email: email.toLowerCase().trim() }).select("+password");
+        const admin = await Admin.findOne({
+            email: email.toLowerCase().trim(),
+        }).select("+password");
 
-        // Use same message for both not-found and wrong-password (security best practice)
-        if (!user) {
+        if (!admin) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid credentials",
             });
         }
 
-        if (!user.isActive) {
+        const isMatch = await bcrypt.compare(password, admin.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials",
+            });
+        }
+
+        if (!admin.isActive) {
             return res.status(403).json({
                 success: false,
                 message: "Your account has been deactivated. Contact support.",
             });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        // source: "admin" tells the middleware to query Admin collection
+        const token = generateToken(admin._id, admin.role, "admin");
 
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid email or password",
-            });
-        }
-
-        const token = generateToken(user._id, user.role);
-
-        res.cookie("token", token, {
+        // Set HTTP-only cookie
+        res.cookie("admin-token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -124,39 +131,39 @@ export const login = async (req, res) => {
             data: {
                 token,
                 user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
+                    id: admin._id,
+                    name: admin.name,
+                    email: admin.email,
+                    role: admin.role,
                 },
             },
         });
     } catch (error) {
-        console.error("Login Error:", error.message);
-        res.status(500).json({
+        console.error("Admin Login Error:", error.message);
+        return res.status(500).json({
             success: false,
-            message: "Internal server error",
+            message: "Server error",
         });
     }
 };
 
-// get logged-in user data
-export const getMe = async (req, res) => {
+// get admin me
+export const getAdminMe = async (req, res) => {
     return res.status(200).json({
         success: true,
         data: req.user,
     });
 };
 
-// logout (client just discards token; this just confirms it)
-export const logout = async (req, res) => {
-    res.clearCookie("token", {
+// admin logout
+export const adminLogout = async (req, res) => {
+    res.clearCookie("admin-token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
     return res.status(200).json({
         success: true,
-        message: "Logged out successfully",
+        message: "Logout successful",
     });
 };

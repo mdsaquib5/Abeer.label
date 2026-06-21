@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BsBoxSeam, BsBoxes, BsFileEarmarkPlus, BsMegaphone } from "react-icons/bs";
 import { CiLogout, CiDeliveryTruck, CiViewList, CiGrid41 } from "react-icons/ci";
 import Logo from "../shared/Logo";
+import useAuthStore from "@/store/authStore";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   const navItems = [
     { name: "Dashboard Overview", href: "/dashboard", icon: CiGrid41, exact: true },
@@ -58,7 +66,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </nav>
 
         <div className="sidebar-footer">
-          <button className="logout-btn">
+          <button className="logout-btn" onClick={handleLogout}>
             <span>Logout</span>
             <CiLogout />
           </button>

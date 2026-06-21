@@ -1,9 +1,6 @@
+import "dotenv/config";
 import app from './app.js';
-import dotenv from 'dotenv';
 import mongoConnection from './configs/database.js';
-
-// Load environment variables
-dotenv.config({ path: './.env' });
 
 const PORT = process.env.PORT || 4000;
 

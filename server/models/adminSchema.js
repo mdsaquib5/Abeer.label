@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const adminSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: true,
+            required: [true, "Name is required"],
             trim: true,
         },
 
         email: {
             type: String,
-            required: true,
+            required: [true, "Email is required"],
             unique: true,
             lowercase: true,
             trim: true,
@@ -18,15 +18,14 @@ const userSchema = new mongoose.Schema(
 
         password: {
             type: String,
-            required: true,
+            required: [true, "Password is required"],
             select: false,
             minlength: [6, "Password must be at least 6 characters"],
         },
 
         role: {
             type: String,
-            enum: ["customer", "writer", "manager", "admin"],
-            default: "customer",
+            role: "admin",
         },
 
         isActive: {
@@ -39,4 +38,4 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Admin", adminSchema);

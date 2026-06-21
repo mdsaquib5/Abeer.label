@@ -95,9 +95,7 @@ const Header = () => {
                                 isAuthenticated ? (
                                     <span 
                                         className="user-greet" 
-                                        onClick={logout}
-                                        title="Click to Log Out"
-                                        style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)', cursor: 'pointer' }}
+                                        style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)' }}
                                     >
                                         Hi, {user?.name?.split(' ')[0]}
                                     </span>
