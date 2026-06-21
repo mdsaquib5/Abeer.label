@@ -30,8 +30,12 @@ body {
     background-color: var(--black);
 }
 
-section {
+/* section {
     padding-block: 80px;
+} */
+
+section[aria-label="Notifications"] {
+    padding-block: 0 !important;
 }
 
 

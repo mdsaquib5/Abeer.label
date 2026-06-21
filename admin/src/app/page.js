@@ -1,7 +1,9 @@
+import AdminLoginForm from "@/components/pages/AdminLoginForm";
+
 export default function Home() {
   return (
     <>
-      <div>Homepage</div>
+      <AdminLoginForm />
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import DashboardTitles from "@/components/layout/DashboardTitles";
 import Searchbar from "@/components/shared/Searchbar";
 import Pagination from "@/components/shared/Pagination";
@@ -139,7 +140,7 @@ export default function OrdersPage() {
                                     <td className="order-id">{order.id}</td>
                                     <td>
                                         <div className="order-product">
-                                            <img src={order.product.image} alt={order.product.name} className="order-product-img" />
+                                            <Image src={order.product.image} alt={order.product.name} className="order-product-img" width={40} height={40} style={{ objectFit: 'cover' }} />
                                             <span>{order.product.name}</span>
                                         </div>
                                     </td>
@@ -202,7 +203,7 @@ export default function OrdersPage() {
                                 <div className="modal-section">
                                     <div className="modal-section-label">Product(s)</div>
                                     <div className="modal-product-row">
-                                        <img src={selectedOrder.product.image} alt={selectedOrder.product.name} className="modal-product-img" />
+                                        <Image src={selectedOrder.product.image} alt={selectedOrder.product.name} className="modal-product-img" width={60} height={60} style={{ objectFit: 'cover' }} />
                                         <div>
                                             <div className="modal-product-name">{selectedOrder.product.name}</div>
                                             <div className="modal-product-meta">Size: {selectedOrder.size} · Qty: {selectedOrder.qty}</div>

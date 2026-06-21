@@ -1,5 +1,6 @@
 import React from "react";
 import { outfit, sacramento, cinzel, khand } from "../fonts/font";
+import { Toaster } from "sonner";
 import "./layout.css";
 import "./globals.css";
 import "./responsive.css";
@@ -19,6 +20,17 @@ export default function RootLayout({ children }) {
         {children}
         <ConditionalFooter />
         <TopButton />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: 'var(--white)',
+              border: '1px solid #380e0e17',
+              color: 'var(--primary)',
+              fontFamily: 'var(--font-outfit)',
+            },
+          }}
+        />
       </body>
     </html>
   );

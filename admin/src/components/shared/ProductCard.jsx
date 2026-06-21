@@ -1,10 +1,11 @@
+import Image from "next/image";
 import { BsPencil, BsTrash } from "react-icons/bs";
 
 const ProductCard = ({ item }) => {
     return (
         <div className="product-card">
             <div className="product-img-wrapper">
-                <img src={item.image} alt={item.title} className="product-img" />
+                <Image src={item.image} alt={item.title} className="product-img" width={400} height={400} style={{ objectFit: 'cover' }} />
             </div>
             <div className="product-info">
                 <div className="product-title">{item.title}</div>

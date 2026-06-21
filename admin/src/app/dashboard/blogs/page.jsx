@@ -106,7 +106,6 @@ export default function BlogsPage() {
                     </div>
                 </div>
 
-                {/* Cards View */}
                 {view === "cards" && (
                     <div className="admin-blogs-grid">
                         {blogsData.map((blog) => (
@@ -125,7 +124,6 @@ export default function BlogsPage() {
                     </div>
                 )}
 
-                {/* List View */}
                 {view === "list" && (
                     <div className="orders-table-wrapper glass-panel" style={{ padding: 0 }}>
                         <table className="orders-table">
