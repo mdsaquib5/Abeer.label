@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import userRoutes from './routes/user.js';
 
 const app = express();
 
@@ -10,8 +11,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CORS configuration
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    process.env.ADMIN_URL    || 'http://localhost:3001',
+];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }));
 
@@ -22,6 +34,9 @@ app.get('/api', (req, res) => {
         message: 'Welcome to Abeer Label API',
     });
 });
+
+// API Routes
+app.use('/api/user', userRoutes);
 
 // Root route
 app.get('/', (req, res) => {

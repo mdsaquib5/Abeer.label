@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Logo from "../shared/Logo";
 import Nav from "../shared/Nav";
 import Link from "next/link";
+import useAuthStore from "@/store/authStore";
 
 const taglines = [
     "Slow Fashion",
@@ -25,6 +26,12 @@ const taglines = [
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
+    const { isAuthenticated, user, logout } = useAuthStore();
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -84,7 +91,20 @@ const Header = () => {
                             <Logo />
                         </div>
                         <div className="cart-icon">
-                            <Link href={'/login'}> <IoPersonOutline /> </Link>
+                            {isHydrated && (
+                                isAuthenticated ? (
+                                    <span 
+                                        className="user-greet" 
+                                        onClick={logout}
+                                        title="Click to Log Out"
+                                        style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)', cursor: 'pointer' }}
+                                    >
+                                        Hi, {user?.name?.split(' ')[0]}
+                                    </span>
+                                ) : (
+                                    <Link href={'/login'}> <IoPersonOutline /> </Link>
+                                )
+                            )}
                             <Link href={'/cart'}> <IoBagOutline /> </Link>
                         </div>
                     </div>

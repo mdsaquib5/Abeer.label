@@ -6,6 +6,7 @@ import "./globals.css";
 import "./responsive.css";
 import { ConditionalHeader, ConditionalFooter } from "@/components/layout/ConditionalLayout";
 import TopButton from "@/components/layout/TopButton";
+import AuthInit from "@/components/layout/AuthInit";
 
 export const metadata = {
   title: "ABEER.LABEL – Wear Your Soul | Luxury Women's Ethnic Wear",
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" style={{ scrollBehavior: 'smooth' }}>
       <body className={`${outfit.variable} ${sacramento.variable} ${cinzel.variable} ${khand.variable} ${outfit.className}`}>
+        <AuthInit />
         <ConditionalHeader />
         {children}
         <ConditionalFooter />
