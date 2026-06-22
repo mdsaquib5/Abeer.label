@@ -191,6 +191,32 @@ export const getProductBySlug = async (
 };
 
 
+// get product by id
+export const getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: product,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+
 // update product or edit
 export const updateProduct = async (
     req,
@@ -209,54 +235,89 @@ export const updateProduct = async (
             });
         }
 
-        const imageFiles =
-            req.files?.images || [];
+        // 1. Handle Selective Image Updates
+        let keepImages = [];
+        if (req.body.keepImages) {
+            try {
+                keepImages = typeof req.body.keepImages === "string"
+                    ? JSON.parse(req.body.keepImages)
+                    : req.body.keepImages;
+            } catch (err) {
+                console.error("Error parsing keepImages:", err);
+            }
+        }
 
-        const videoFile =
-            req.files?.video?.[0];
+        const imageFiles = req.files?.images || [];
 
-        if (imageFiles.length) {
+        // If keepImages was explicitly provided, we selectively delete and keep
+        if (req.body.keepImages) {
+            const keepPublicIds = new Set(keepImages.map((img) => img.publicId));
+
+            // Delete images that are not in keepImages
+            for (const img of product.images) {
+                if (!keepPublicIds.has(img.publicId)) {
+                    await deleteFromCloudinary(img.publicId);
+                }
+            }
+
+            // Start with kept images
+            const updatedImages = [...keepImages];
+
+            // Upload any new images and append them
+            if (imageFiles.length) {
+                for (const file of imageFiles) {
+                    const uploaded = await uploadToCloudinary(
+                        file.buffer,
+                        "abeer-label/products/images",
+                        "image"
+                    );
+                    updatedImages.push(uploaded);
+                }
+            }
+
+            product.images = updatedImages;
+        } else if (imageFiles.length) {
+            // Fallback/Legacy: if keepImages is not passed but imageFiles is, replace all
             for (const image of product.images) {
-                await deleteFromCloudinary(
-                    image.publicId
-                );
+                await deleteFromCloudinary(image.publicId);
             }
 
             const uploadedImages = [];
-
             for (const file of imageFiles) {
-                const uploaded =
-                    await uploadToCloudinary(
-                        file.buffer,
-                        "abeer-label/products/images"
-                    );
-
+                const uploaded = await uploadToCloudinary(
+                    file.buffer,
+                    "abeer-label/products/images",
+                    "image"
+                );
                 uploadedImages.push(uploaded);
             }
 
             product.images = uploadedImages;
         }
 
-        if (videoFile) {
-            if (
-                product.video?.publicId
-            ) {
-                await deleteFromCloudinary(
-                    product.video.publicId,
-                    "video"
-                );
+        // 2. Handle Video Updates and Removal
+        const videoFile = req.files?.video?.[0];
+
+        if (req.body.removeVideo === "true" || req.body.removeVideo === true) {
+            if (product.video?.publicId) {
+                await deleteFromCloudinary(product.video.publicId, "video");
+            }
+            product.video = null;
+        } else if (videoFile) {
+            if (product.video?.publicId) {
+                await deleteFromCloudinary(product.video.publicId, "video");
             }
 
-            const uploadedVideo =
-                await uploadToCloudinary(
-                    videoFile.buffer,
-                    "abeer-label/products/videos",
-                    "video"
-                );
+            const uploadedVideo = await uploadToCloudinary(
+                videoFile.buffer,
+                "abeer-label/products/videos",
+                "video"
+            );
 
             product.video = uploadedVideo;
         }
 
+        // 3. Parse Array/Object Fields
         if (req.body.sizes) {
             req.body.sizes =
                 typeof req.body.sizes === "string"
@@ -271,9 +332,12 @@ export const updateProduct = async (
                     : req.body.seoKeywords;
         }
 
+        // 4. Update other fields (ignoring non-schema control fields)
         Object.keys(req.body).forEach(
             (key) => {
-                product[key] = req.body[key];
+                if (key !== "keepImages" && key !== "removeVideo") {
+                    product[key] = req.body[key];
+                }
             }
         );
 
@@ -281,12 +345,12 @@ export const updateProduct = async (
 
         return res.status(200).json({
             success: true,
-            message:
-                "Product updated successfully",
+            message: "Product updated successfully",
             data: product,
         });
 
     } catch (error) {
+        console.error("Update Product Error:", error);
         return res.status(500).json({
             success: false,
             message: error.message,

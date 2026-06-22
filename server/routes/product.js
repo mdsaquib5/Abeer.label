@@ -3,6 +3,7 @@ import {
     addProduct,
     getProducts,
     getProductBySlug,
+    getProductById,
     updateProduct,
     deleteProduct,
     updateStock,
@@ -18,6 +19,7 @@ router.get("/", getProducts);
 router.get("/:slug", getProductBySlug);
 
 // Protected routes (Staff/Admins only)
+router.get("/id/:id", protect("admin", "manager"), getProductById);
 router.post("/", protect("admin", "manager"), uploadProductMedia, addProduct);
 router.put("/:id", protect("admin", "manager"), uploadProductMedia, updateProduct);
 router.delete("/:id", protect("admin", "manager"), deleteProduct);

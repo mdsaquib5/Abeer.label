@@ -21,6 +21,15 @@ export const fetchProductBySlug = async (slug) => {
 };
 
 /**
+ * Fetch a single product by its MongoDB id
+ * @param {string} id
+ */
+export const fetchProductById = async (id) => {
+    const { data } = await api.get(`/products/id/${id}`);
+    return data;
+};
+
+/**
  * Create a new product (multipart/form-data)
  * @param {FormData} formData
  */
