@@ -1,96 +1,43 @@
 "use client";
-import React, { useState, useMemo, useEffect } from 'react';
+import React from 'react';
 import TopHeader from '@/components/pages/TopHeader';
 import SearchBar from '@/components/pages/SearchBar';
 import SideBar from '@/components/pages/SideBar';
 import ProductCard from '@/components/shared/ProductCard';
-import { products } from '@/constants/product';
+import useShopFilters from '@/hooks/useShopFilters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoCloseOutline, IoOptionsOutline } from 'react-icons/io5';
 
 const ShopPage = () => {
-    const maxPriceLimit = useMemo(() => {
-        if (!products.length) return 5000;
-        return Math.max(...products.map(p => p.price));
-    }, []);
-
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [selectedSize, setSelectedSize] = useState("");
-    const [selectedPriceRange, setSelectedPriceRange] = useState(maxPriceLimit);
-    const [sortBy, setSortBy] = useState("default");
-    const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-
-    const [tempCategory, setTempCategory] = useState(selectedCategory);
-    const [tempSize, setTempSize] = useState(selectedSize);
-    const [tempPriceRange, setTempPriceRange] = useState(selectedPriceRange);
-    const [tempSortBy, setTempSortBy] = useState(sortBy);
-
-    useEffect(() => {
-        if (isMobileDrawerOpen) {
-            setTempCategory(selectedCategory);
-            setTempSize(selectedSize);
-            setTempPriceRange(selectedPriceRange);
-            setTempSortBy(sortBy);
-        }
-    }, [isMobileDrawerOpen, selectedCategory, selectedSize, selectedPriceRange, sortBy]);
-
-    const filteredProducts = useMemo(() => {
-        return products.filter(product => {
-            const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-            const matchesPrice = product.price <= selectedPriceRange;
-            const matchesSize = !selectedSize || (product.sizes && product.sizes.includes(selectedSize));
-
-            const searchLower = searchQuery.toLowerCase();
-            const matchesSearch = !searchQuery ||
-                product.name.toLowerCase().includes(searchLower) ||
-                product.description.toLowerCase().includes(searchLower) ||
-                (product.collection && product.collection.toLowerCase().includes(searchLower)) ||
-                (product.category && product.category.toLowerCase().includes(searchLower));
-
-            return matchesCategory && matchesPrice && matchesSize && matchesSearch;
-        });
-    }, [selectedCategory, selectedPriceRange, selectedSize, searchQuery]);
-
-    const sortedProducts = useMemo(() => {
-        const list = [...filteredProducts];
-        if (sortBy === "low-to-high") {
-            return list.sort((a, b) => a.price - b.price);
-        }
-        if (sortBy === "high-to-low") {
-            return list.sort((a, b) => b.price - a.price);
-        }
-        if (sortBy === "name-asc") {
-            return list.sort((a, b) => a.name.localeCompare(b.name));
-        }
-        return list;
-    }, [filteredProducts, sortBy]);
-
-    const handleClearFilters = () => {
-        setSearchQuery("");
-        setSelectedCategory("All");
-        setSelectedSize("");
-        setSelectedPriceRange(maxPriceLimit);
-        setSortBy("default");
-    };
-
-    // Active tags helper
-    const activeTags = useMemo(() => {
-        const tags = [];
-        if (selectedCategory !== "All") {
-            tags.push({ id: "category", label: selectedCategory, onRemove: () => setSelectedCategory("All") });
-        }
-        if (selectedSize) {
-            tags.push({ id: "size", label: `Size: ${selectedSize}`, onRemove: () => setSelectedSize("") });
-        }
-        if (searchQuery) {
-            tags.push({ id: "search", label: `Search: "${searchQuery}"`, onRemove: () => setSearchQuery("") });
-        }
-        if (selectedPriceRange < maxPriceLimit) {
-            tags.push({ id: "price", label: `Max Price: ₹${selectedPriceRange.toLocaleString('en-IN')}`, onRemove: () => setSelectedPriceRange(maxPriceLimit) });
-        }
-        return tags;
-    }, [selectedCategory, selectedSize, searchQuery, selectedPriceRange, maxPriceLimit]);
+    const {
+        products,
+        isLoading,
+        maxPriceLimit,
+        searchQuery,
+        setSearchQuery,
+        selectedCategory,
+        setSelectedCategory,
+        selectedSize,
+        setSelectedSize,
+        selectedPriceRange,
+        setSelectedPriceRange,
+        sortBy,
+        setSortBy,
+        isMobileDrawerOpen,
+        setIsMobileDrawerOpen,
+        tempCategory,
+        setTempCategory,
+        tempSize,
+        setTempSize,
+        tempPriceRange,
+        setTempPriceRange,
+        tempSortBy,
+        setTempSortBy,
+        filteredProducts,
+        sortedProducts,
+        handleClearFilters,
+        activeTags,
+    } = useShopFilters();
 
     return (
         <div className="pages">
@@ -156,11 +103,25 @@ const ShopPage = () => {
                             />
                         </div>
                         <div className="shop-products-column">
-                            {sortedProducts.length > 0 ? (
+                            {isLoading ? (
+                                <div className="shop-products-grid">
+                                    {[1, 2, 3, 4, 5, 6].map((num) => (
+                                        <div key={num} className="product-card skeleton" style={{ animation: "pulse 1.5s infinite ease-in-out" }}>
+                                            <div className="product-image" style={{ background: "#1a1a1a", height: "300px" }} />
+                                            <div className="product-details-area" style={{ padding: "16px" }}>
+                                                <div style={{ background: "#1a1a1a", height: "10px", width: "40%", marginBottom: "8px" }} />
+                                                <div style={{ background: "#1a1a1a", height: "16px", width: "70%", marginBottom: "8px" }} />
+                                                <div style={{ background: "#1a1a1a", height: "12px", width: "100%", marginBottom: "12px" }} />
+                                                <div style={{ background: "#1a1a1a", height: "16px", width: "30%" }} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : sortedProducts.length > 0 ? (
                                 <div className="shop-products-grid">
                                     {sortedProducts.map((product, index) => (
                                         <ProductCard
-                                            key={product.id}
+                                            key={product._id || product.id}
                                             product={product}
                                             index={index}
                                         />

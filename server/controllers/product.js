@@ -165,10 +165,11 @@ export const getProductBySlug = async (
     res
 ) => {
     try {
-        const product =
-            await Product.findOne({
-                slug: req.params.slug,
-            });
+        const query = /^[0-9a-fA-F]{24}$/.test(req.params.slug)
+            ? { $or: [{ slug: req.params.slug }, { _id: req.params.slug }] }
+            : { slug: req.params.slug };
+
+        const product = await Product.findOne(query);
 
         if (!product) {
             return res.status(404).json({

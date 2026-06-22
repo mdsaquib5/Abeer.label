@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
 import { notFound } from 'next/navigation';
-import { products } from '@/constants/product';
+import useProductStore from '@/store/productStore';
 import TopHeader from '@/components/pages/TopHeader';
 import ProductCard from '@/components/shared/ProductCard';
 import {
@@ -35,9 +35,7 @@ const TABS = [
 
 const ProductDetailPage = ({ params }) => {
     const { id } = use(params);
-    const product = products.find(p => p.id === id);
-
-    if (!product) notFound();
+    const { singleProduct: product, loadSingleProduct, isSingleLoading, products, loadProducts } = useProductStore();
 
     const [activeImage, setActiveImage] = useState(0);
     const [selectedSize, setSelectedSize] = useState('');
@@ -49,6 +47,15 @@ const ProductDetailPage = ({ params }) => {
     const [thumbsVisible, setThumbsVisible] = useState(6);
 
     useEffect(() => {
+        if (id) {
+            loadSingleProduct(id);
+        }
+        if (products.length === 0) {
+            loadProducts();
+        }
+    }, [id, loadSingleProduct, loadProducts, products.length]);
+
+    useEffect(() => {
         const handleResize = () => {
             setThumbsVisible(window.innerWidth <= 900 ? 4 : 6);
         };
@@ -58,8 +65,9 @@ const ProductDetailPage = ({ params }) => {
     }, []);
 
     const media = useMemo(() => {
-        const items = product.images.map(img => ({ type: 'image', url: img }));
-        const videoUrl = product.video || product.videoSrc;
+        if (!product || !product.images) return [];
+        const items = product.images.map(img => ({ type: 'image', url: img.url || img }));
+        const videoUrl = product.video?.url || product.video || product.videoSrc;
         if (videoUrl) {
             items.push({ type: 'video', url: videoUrl });
         }
@@ -101,7 +109,34 @@ const ProductDetailPage = ({ params }) => {
     };
 
     // Related products (exclude current)
-    const related = products.filter(p => p.id !== id).slice(0, 4);
+    const related = useMemo(() => {
+        if (!product) return [];
+        return products.filter(p => p._id !== product._id && p.slug !== product.slug && p.id !== id).slice(0, 4);
+    }, [products, product, id]);
+
+    // Handle loading and empty states
+    if (isSingleLoading) {
+        return (
+            <div className="pages">
+                <TopHeader />
+                <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "450px" }}>
+                    <div style={{ color: "var(--white)", opacity: 0.6, fontSize: "16px", textTransform: "uppercase", letterSpacing: "1px" }}>Loading Product Details...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!product && !isSingleLoading) {
+        return (
+            <div className="pages">
+                <TopHeader />
+                <div className="container" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "450px", gap: "10px" }}>
+                    <h3 style={{ color: "var(--white)" }}>Product Not Found</h3>
+                    <p style={{ color: "var(--accent)" }}>The product you are looking for might have been removed or is currently unavailable.</p>
+                </div>
+            </div>
+        );
+    }
 
     const discount = product.originalPrice
         ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -408,7 +443,7 @@ const ProductDetailPage = ({ params }) => {
                             </div>
                             <div className="pd-related-grid">
                                 {related.map((p, idx) => (
-                                    <ProductCard key={p.id} product={p} index={idx} />
+                                    <ProductCard key={p._id || p.id || idx} product={p} index={idx} />
                                 ))}
                             </div>
                         </div>
