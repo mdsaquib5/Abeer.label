@@ -28,8 +28,8 @@ const ProductCard = ({ item }) => {
         item.status === "published"
             ? "#4ade80"
             : item.status === "archived"
-            ? "#f87171"
-            : "#facc15";
+                ? "#f87171"
+                : "#facc15";
 
     return (
         <div className="product-card">
@@ -68,11 +68,11 @@ const ProductCard = ({ item }) => {
                         background: statusColor,
                         color: "#000",
                         fontSize: "10px",
-                        fontWeight: 700,
+                        fontWeight: 500,
                         padding: "2px 8px",
-                        borderRadius: "20px",
+                        borderRadius: "4px",
                         textTransform: "uppercase",
-                        letterSpacing: "0.5px",
+                        letterSpacing: "1.5px",
                     }}
                 >
                     {item.status}
