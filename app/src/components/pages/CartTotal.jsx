@@ -1,8 +1,10 @@
 "use client";
 import React from 'react';
 import { IoLockClosedOutline, IoShieldCheckmarkOutline, IoCardOutline } from 'react-icons/io5';
+import { useRouter } from 'next/navigation';
 
 const CartTotal = ({ items }) => {
+    const router = useRouter();
 
     const subtotal = items.reduce((acc, item) => {
         const price = item.product?.price || item.price || 0;
@@ -51,7 +53,10 @@ const CartTotal = ({ items }) => {
 
             <p className="taxes-note">Inclusive of all taxes.</p>
 
-            <button className="button-primary checkout-btn">
+            <button 
+                className="button-primary checkout-btn"
+                onClick={() => router.push('/checkout')}
+            >
                 PROCEED TO SECURE CHECKOUT <IoLockClosedOutline />
             </button>
 

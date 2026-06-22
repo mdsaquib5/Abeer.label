@@ -1,37 +1,68 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { IoCheckmarkCircle, IoRadioButtonOn, IoRadioButtonOff } from 'react-icons/io5';
 import { LiaEditSolid } from "react-icons/lia";
 import TopHeader from "@/components/pages/TopHeader";
 import OrderSummary from "@/components/pages/OrderSummary";
-
-const dummyItems = [
-    {
-        id: '1',
-        name: 'Geet Farshi Set 2 Piece',
-        price: 4499,
-        size: 'M',
-        quantity: 1,
-        image: 'https://res.cloudinary.com/dhufjjp9t/image/upload/v1780991430/nargis-profile_mbalmc.jpg'
-    },
-    {
-        id: '2',
-        name: 'Floral Affaire — Nargis',
-        price: 3299,
-        size: 'L',
-        quantity: 2,
-        image: 'https://res.cloudinary.com/dhufjjp9t/image/upload/v1780991430/nargis-profile_mbalmc.jpg'
-    }
-];
+import useCartStore from "@/store/cartStore";
+import useAuthStore from "@/store/authStore";
 
 const page = () => {
     const [activeStep, setActiveStep] = useState(1);
-    const [items, setItems] = useState(dummyItems);
     const [promoCode, setPromoCode] = useState('');
     const [shippingMethod, setShippingMethod] = useState('standard');
     const [paymentMethod, setPaymentMethod] = useState('razorpay');
 
-    const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const router = useRouter();
+    const { items: cartItems, removeCartItem, loadCart } = useCartStore();
+    const { isAuthenticated } = useAuthStore();
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
+    useEffect(() => {
+        if (isHydrated && !isAuthenticated) {
+            router.push('/login');
+        }
+    }, [isHydrated, isAuthenticated, router]);
+
+    useEffect(() => {
+        if (isHydrated && isAuthenticated) {
+            loadCart();
+        }
+    }, [isHydrated, isAuthenticated, loadCart]);
+
+    // Map Zustand cart items to the flat structure expected by OrderSummary
+    const checkoutItems = cartItems.map((item, idx) => {
+        const product = item.product || {};
+        const productId = product._id || product.id || idx;
+        const imageUrl = product.images?.[0]?.url || product.images?.[0] || product.image || item.image || "";
+        return {
+            id: `${productId}-${item.size}`, // unique key for checkout tracking
+            productId,
+            name: product.name || item.name || "Product Name",
+            price: product.price || item.price || 0,
+            size: item.size,
+            quantity: item.quantity,
+            image: imageUrl
+        };
+    });
+
+    // If cart is empty, redirect to cart page
+    useEffect(() => {
+        if (isHydrated && isAuthenticated && checkoutItems.length === 0) {
+            router.push('/cart');
+        }
+    }, [isHydrated, isAuthenticated, checkoutItems.length, router]);
+
+    if (!isHydrated || !isAuthenticated || checkoutItems.length === 0) {
+        return null;
+    }
+
+    const subtotal = checkoutItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
     let shippingCost = 0;
     if (shippingMethod === 'standard') {
@@ -45,7 +76,10 @@ const page = () => {
     const total = subtotal + shippingCost;
 
     const removeItem = (id) => {
-        setItems(items.filter(item => item.id !== id));
+        const target = checkoutItems.find(item => item.id === id);
+        if (target) {
+            removeCartItem(target.productId, target.size);
+        }
     };
 
     return (
@@ -205,7 +239,7 @@ const page = () => {
 
                         <div className="checkout-summary-section">
                             <OrderSummary
-                                items={items}
+                                items={checkoutItems}
                                 removeItem={removeItem}
                                 subtotal={subtotal}
                                 shipping={shippingCost}
