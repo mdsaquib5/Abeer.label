@@ -27,6 +27,13 @@ const useAuthStore = create(
             isLoading: false,
           });
 
+          try {
+            const { default: useCartStore } = await import("./cartStore");
+            await useCartStore.getState().syncCartOnLogin();
+          } catch (err) {
+            console.error("Failed to sync cart on signup:", err);
+          }
+
           return { success: true, message: data.message };
         } catch (err) {
           const message = err.response?.data?.message || "Signup failed";
@@ -50,6 +57,13 @@ const useAuthStore = create(
             isLoading: false,
           });
 
+          try {
+            const { default: useCartStore } = await import("./cartStore");
+            await useCartStore.getState().syncCartOnLogin();
+          } catch (err) {
+            console.error("Failed to sync cart on login:", err);
+          }
+
           return { success: true, message: data.message };
         } catch (err) {
           const message = err.response?.data?.message || "Login failed";
@@ -67,6 +81,12 @@ const useAuthStore = create(
         } finally {
           localStorage.removeItem("abeer-user-token");
           set({ token: null, user: null, isAuthenticated: false, error: null });
+          try {
+            const { default: useCartStore } = await import("./cartStore");
+            useCartStore.getState().clearCart();
+          } catch (err) {
+            console.error("Failed to clear cart on logout:", err);
+          }
         }
       },
 

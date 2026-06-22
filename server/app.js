@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js';
 import productRoutes from './routes/product.js';
+import cartRoutes from './routes/cart.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.get('/api', (req, res) => {
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Root route
 app.get('/', (req, res) => {

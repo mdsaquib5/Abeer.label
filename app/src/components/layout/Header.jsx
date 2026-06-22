@@ -9,6 +9,7 @@ import Logo from "../shared/Logo";
 import Nav from "../shared/Nav";
 import Link from "next/link";
 import useAuthStore from "@/store/authStore";
+import useCartStore from "@/store/cartStore";
 
 const taglines = [
     "Slow Fashion",
@@ -28,10 +29,17 @@ const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
     const { isAuthenticated, user, logout } = useAuthStore();
+    const { items, loadCart } = useCartStore();
+
+    const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
     useEffect(() => {
         setIsHydrated(true);
     }, []);
+
+    useEffect(() => {
+        loadCart();
+    }, [loadCart, isAuthenticated]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -103,7 +111,14 @@ const Header = () => {
                                     <Link href={'/login'}> <IoPersonOutline /> </Link>
                                 )
                             )}
-                            <Link href={'/cart'}> <IoBagOutline /> </Link>
+                            <Link href={'/cart'}>
+                                <IoBagOutline />
+                                {isHydrated && cartCount > 0 && (
+                                    <span className="cart-badge">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
                         </div>
                     </div>
                 </div>

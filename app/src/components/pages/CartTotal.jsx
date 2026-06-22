@@ -4,7 +4,10 @@ import { IoLockClosedOutline, IoShieldCheckmarkOutline, IoCardOutline } from 're
 
 const CartTotal = ({ items }) => {
 
-    const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const subtotal = items.reduce((acc, item) => {
+        const price = item.product?.price || item.price || 0;
+        return acc + (price * item.quantity);
+    }, 0);
 
     // Free shipping above 5000, else 150
     const shipping = subtotal > 5000 ? 0 : 150;

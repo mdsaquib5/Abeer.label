@@ -2,8 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import useProductStore from '@/store/productStore';
+import useCartStore from '@/store/cartStore';
+import { toast } from 'sonner';
 import TopHeader from '@/components/pages/TopHeader';
 import ProductCard from '@/components/shared/ProductCard';
 import {
@@ -35,7 +37,9 @@ const TABS = [
 
 const ProductDetailPage = ({ params }) => {
     const { id } = use(params);
+    const router = useRouter();
     const { singleProduct: product, loadSingleProduct, isSingleLoading, products, loadProducts } = useProductStore();
+    const { addToCart } = useCartStore();
 
     const [activeImage, setActiveImage] = useState(0);
     const [selectedSize, setSelectedSize] = useState('');
@@ -91,21 +95,27 @@ const ProductDetailPage = ({ params }) => {
         setSizeError(false);
     };
 
-    const handleAddToBag = () => {
+    const handleAddToBag = async () => {
         if (!selectedSize) {
             setSizeError(true);
             return;
         }
-        // Cart logic placeholder
-        alert(`Added to bag: ${product.name} | Size: ${selectedSize} | Qty: ${quantity}`);
+        // Add quantity times to cart
+        for (let i = 0; i < quantity; i++) {
+            await addToCart(product, selectedSize);
+        }
+        toast.success(`Added ${quantity} x "${product.name}" (Size: ${selectedSize}) to bag! 🛍️`);
     };
 
-    const handleBuyNow = () => {
+    const handleBuyNow = async () => {
         if (!selectedSize) {
             setSizeError(true);
             return;
         }
-        alert(`Buy Now: ${product.name} | Size: ${selectedSize} | Qty: ${quantity}`);
+        for (let i = 0; i < quantity; i++) {
+            await addToCart(product, selectedSize);
+        }
+        router.push('/cart');
     };
 
     // Related products (exclude current)

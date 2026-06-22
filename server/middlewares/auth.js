@@ -6,15 +6,20 @@ export const protect = (...allowedRoles) => async (req, res, next) => {
     try {
         let token;
 
-        // Check cookies first (admin-token cookie or regular token cookie)
-        if (req.cookies && (req.cookies["admin-token"] || req.cookies.token)) {
-            token = req.cookies["admin-token"] || req.cookies.token;
+        // 1. Check Authorization header first (most explicit client credential)
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.split(" ")[1];
         }
-        // Fallback to Authorization header
-        else {
-            const authHeader = req.headers.authorization;
-            if (authHeader && authHeader.startsWith("Bearer ")) {
-                token = authHeader.split(" ")[1];
+        // 2. Check cookies if header is not present
+        else if (req.cookies) {
+            // Select appropriate cookie based on required roles to avoid localhost cookie sharing conflicts
+            if (allowedRoles.length === 1 && allowedRoles.includes("customer")) {
+                token = req.cookies.token;
+            } else if (allowedRoles.length === 1 && allowedRoles.includes("admin")) {
+                token = req.cookies["admin-token"];
+            } else {
+                token = req.cookies["admin-token"] || req.cookies.token;
             }
         }
 
