@@ -9,23 +9,30 @@ const useCartStore = create(
       items: [], // Array of { product: Object, quantity: Number, size: String }
       isLoading: false,
       error: null,
+      fetchCounter: 0,
 
       // Load cart - Fetch from DB if authenticated, otherwise use local persisted state
       loadCart: async () => {
         const { isAuthenticated } = useAuthStore.getState();
         if (!isAuthenticated) return; // For guest, local state is already loaded by persist middleware
 
-        set({ isLoading: true, error: null });
+        const currentFetchId = get().fetchCounter + 1;
+        set({ isLoading: true, error: null, fetchCounter: currentFetchId });
+
         try {
           const response = await fetchCart();
-          if (response.success) {
-            set({ items: response.data.items || [], isLoading: false });
-          } else {
-            set({ error: response.message, isLoading: false });
+          if (get().fetchCounter === currentFetchId) {
+            if (response.success) {
+              set({ items: response.data.items || [], isLoading: false });
+            } else {
+              set({ error: response.message, isLoading: false });
+            }
           }
         } catch (err) {
           console.error("Zustand loadCart error:", err);
-          set({ isLoading: false });
+          if (get().fetchCounter === currentFetchId) {
+            set({ isLoading: false });
+          }
         }
       },
 
@@ -35,15 +42,13 @@ const useCartStore = create(
         const productId = product._id || product.id;
 
         if (isAuthenticated) {
-          set({ isLoading: true });
           try {
             const response = await addToCartApi(productId, size);
             if (response.success) {
-              set({ items: response.data.items || [], isLoading: false });
+              set({ items: response.data.items || [] });
             }
           } catch (err) {
             console.error("addToCart error:", err);
-            set({ isLoading: false });
           }
         } else {
           // Guest Cart: Update localStorage state
@@ -67,15 +72,13 @@ const useCartStore = create(
         const { isAuthenticated } = useAuthStore.getState();
 
         if (isAuthenticated) {
-          set({ isLoading: true });
           try {
             const response = await decreaseCartItemApi(productId, size);
             if (response.success) {
-              set({ items: response.data.items || [], isLoading: false });
+              set({ items: response.data.items || [] });
             }
           } catch (err) {
             console.error("decreaseCartItem error:", err);
-            set({ isLoading: false });
           }
         } else {
           // Guest Cart
@@ -99,15 +102,13 @@ const useCartStore = create(
         const { isAuthenticated } = useAuthStore.getState();
 
         if (isAuthenticated) {
-          set({ isLoading: true });
           try {
             const response = await removeCartItemApi(productId, size);
             if (response.success) {
-              set({ items: response.data.items || [], isLoading: false });
+              set({ items: response.data.items || [] });
             }
           } catch (err) {
             console.error("removeCartItem error:", err);
-            set({ isLoading: false });
           }
         } else {
           // Guest Cart
@@ -119,25 +120,33 @@ const useCartStore = create(
       },
 
       // Sync guest cart directly (usually triggered post login)
-      syncCartOnLogin: async () => {
+      syncCartWithItems: async (guestItems = []) => {
         const { isAuthenticated } = useAuthStore.getState();
         if (!isAuthenticated) return;
 
-        const guestItems = get().items;
-        if (guestItems.length === 0) {
+        const currentFetchId = get().fetchCounter + 1;
+        set({ isLoading: true, fetchCounter: currentFetchId });
+
+        if (!guestItems || guestItems.length === 0) {
           // If no guest items, just fetch user's existing DB cart
           try {
             const response = await fetchCart();
-            if (response.success) {
-              set({ items: response.data.items || [] });
+            if (get().fetchCounter === currentFetchId) {
+              if (response.success) {
+                set({ items: response.data.items || [], isLoading: false });
+              } else {
+                set({ isLoading: false });
+              }
             }
           } catch (err) {
             console.error(err);
+            if (get().fetchCounter === currentFetchId) {
+              set({ isLoading: false });
+            }
           }
           return;
         }
 
-        set({ isLoading: true });
         try {
           for (const item of guestItems) {
             const productId = item.product._id || item.product.id;
@@ -147,12 +156,18 @@ const useCartStore = create(
           }
           set({ items: [] }); // Clear guest items
           const response = await fetchCart();
-          if (response.success) {
-            set({ items: response.data.items || [], isLoading: false });
+          if (get().fetchCounter === currentFetchId) {
+            if (response.success) {
+              set({ items: response.data.items || [], isLoading: false });
+            } else {
+              set({ isLoading: false });
+            }
           }
         } catch (err) {
-          console.error("syncCartOnLogin error:", err);
-          set({ isLoading: false });
+          console.error("syncCartWithItems error:", err);
+          if (get().fetchCounter === currentFetchId) {
+            set({ isLoading: false });
+          }
         }
       },
 

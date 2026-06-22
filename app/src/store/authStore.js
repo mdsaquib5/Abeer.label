@@ -16,6 +16,15 @@ const useAuthStore = create(
       signup: async ({ name, email, password }) => {
         set({ isLoading: true, error: null });
         try {
+          // Capture guest items before database authentication
+          let guestItems = [];
+          try {
+            const { default: useCartStore } = await import("./cartStore");
+            guestItems = useCartStore.getState().items || [];
+          } catch (err) {
+            console.error("Failed to read guest items before signup:", err);
+          }
+
           const { data } = await api.post("/user/signup", { name, email, password });
 
           localStorage.setItem("abeer-user-token", data.data.token);
@@ -29,7 +38,7 @@ const useAuthStore = create(
 
           try {
             const { default: useCartStore } = await import("./cartStore");
-            await useCartStore.getState().syncCartOnLogin();
+            await useCartStore.getState().syncCartWithItems(guestItems);
           } catch (err) {
             console.error("Failed to sync cart on signup:", err);
           }
@@ -46,6 +55,15 @@ const useAuthStore = create(
       login: async ({ email, password }) => {
         set({ isLoading: true, error: null });
         try {
+          // Capture guest items before database authentication
+          let guestItems = [];
+          try {
+            const { default: useCartStore } = await import("./cartStore");
+            guestItems = useCartStore.getState().items || [];
+          } catch (err) {
+            console.error("Failed to read guest items before login:", err);
+          }
+
           const { data } = await api.post("/user/login", { email, password });
 
           localStorage.setItem("abeer-user-token", data.data.token);
@@ -59,7 +77,7 @@ const useAuthStore = create(
 
           try {
             const { default: useCartStore } = await import("./cartStore");
-            await useCartStore.getState().syncCartOnLogin();
+            await useCartStore.getState().syncCartWithItems(guestItems);
           } catch (err) {
             console.error("Failed to sync cart on login:", err);
           }
