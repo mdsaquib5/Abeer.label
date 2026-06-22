@@ -5,6 +5,7 @@ import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js';
 import productRoutes from './routes/product.js';
 import cartRoutes from './routes/cart.js';
+import orderRoutes from './routes/order.js';
 
 const app = express();
 
@@ -44,11 +45,23 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Root route
 app.get('/', (req, res) => {
     const port = process.env.PORT || 4000;
     res.send(`Abeer Label Server is running on ${port}`);
+});
+
+// Centralized Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error("Centralized Error:", err);
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        stack: process.env.NODE_ENV === "production" ? null : err.stack
+    });
 });
 
 export default app;

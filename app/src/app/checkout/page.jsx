@@ -7,16 +7,31 @@ import TopHeader from "@/components/pages/TopHeader";
 import OrderSummary from "@/components/pages/OrderSummary";
 import useCartStore from "@/store/cartStore";
 import useAuthStore from "@/store/authStore";
+import useOrderStore from "@/store/orderStore";
 
 const page = () => {
     const [activeStep, setActiveStep] = useState(1);
     const [promoCode, setPromoCode] = useState('');
     const [shippingMethod, setShippingMethod] = useState('standard');
-    const [paymentMethod, setPaymentMethod] = useState('razorpay');
+    const [paymentMethod, setPaymentMethod] = useState('cod'); // Default to COD to align with backend
+
+    const [formData, setFormData] = useState({
+        email: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        apartment: '',
+        city: '',
+        state: '',
+        pincode: '',
+        phone: ''
+    });
+    const [validationError, setValidationError] = useState('');
 
     const router = useRouter();
     const { items: cartItems, removeCartItem, loadCart } = useCartStore();
     const { isAuthenticated } = useAuthStore();
+    const { placeOrder, isLoading: isPlacingOrder } = useOrderStore();
     const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
@@ -82,6 +97,64 @@ const page = () => {
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        setValidationError('');
+    };
+
+    const handleContinueToShipping = () => {
+        const { email, firstName, lastName, address, city, state, pincode, phone } = formData;
+        if (!email || !firstName || !lastName || !address || !city || !state || !pincode || !phone) {
+            setValidationError('Please fill in all required shipping address fields.');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setValidationError('Please enter a valid email address.');
+            return;
+        }
+
+        if (phone.trim().length < 10) {
+            setValidationError('Please enter a valid phone number.');
+            return;
+        }
+
+        setValidationError('');
+        setActiveStep(2);
+    };
+
+    const handlePlaceOrder = async () => {
+        // Ensure payments select matches backend constraints
+        if (paymentMethod !== 'cod') {
+            setValidationError("Online payments are currently disabled. Please select Cash on Delivery (COD) to place your order.");
+            return;
+        }
+
+        const { email, firstName, lastName, address, apartment, city, state, pincode, phone } = formData;
+
+        const orderPayload = {
+            fullName: `${firstName} ${lastName}`.trim(),
+            phone,
+            email,
+            address: apartment ? `${address}, ${apartment}` : address,
+            city,
+            state,
+            pincode,
+        };
+
+        const result = await placeOrder(orderPayload);
+        if (result.success) {
+            router.push('/order-success');
+        } else {
+            setValidationError(result.message || "Failed to place your order. Please try again.");
+        }
+    };
+
     return (
         <div className="pages">
             <TopHeader
@@ -105,31 +178,106 @@ const page = () => {
                                     <div className="step-content">
                                         <div className="form-grid">
                                             <div className="form-group full-width">
-                                                <input type="email" placeholder="Email Address" className="co-input" />
+                                                <input 
+                                                    type="email" 
+                                                    name="email"
+                                                    placeholder="Email Address" 
+                                                    value={formData.email}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group">
-                                                <input type="text" placeholder="First Name" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="firstName"
+                                                    placeholder="First Name" 
+                                                    value={formData.firstName}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group">
-                                                <input type="text" placeholder="Last Name" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="lastName"
+                                                    placeholder="Last Name" 
+                                                    value={formData.lastName}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group full-width">
-                                                <input type="text" placeholder="Address" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="address"
+                                                    placeholder="Address" 
+                                                    value={formData.address}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group full-width">
-                                                <input type="text" placeholder="Apartment, suite, etc. (optional)" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="apartment"
+                                                    placeholder="Apartment, suite, etc. (optional)" 
+                                                    value={formData.apartment}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                />
                                             </div>
                                             <div className="form-group">
-                                                <input type="text" placeholder="City" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="city"
+                                                    placeholder="City" 
+                                                    value={formData.city}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group">
-                                                <input type="text" placeholder="Postal Code" className="co-input" />
+                                                <input 
+                                                    type="text" 
+                                                    name="state"
+                                                    placeholder="State" 
+                                                    value={formData.state}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
-                                            <div className="form-group full-width">
-                                                <input type="tel" placeholder="Phone Number" className="co-input" />
+                                            <div className="form-group">
+                                                <input 
+                                                    type="text" 
+                                                    name="pincode"
+                                                    placeholder="Postal Code" 
+                                                    value={formData.pincode}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <input 
+                                                    type="tel" 
+                                                    name="phone"
+                                                    placeholder="Phone Number" 
+                                                    value={formData.phone}
+                                                    onChange={handleInputChange}
+                                                    className="co-input" 
+                                                    required
+                                                />
                                             </div>
                                         </div>
-                                        <button className="button-primary step-next-btn" onClick={() => setActiveStep(2)}>
+                                        {validationError && <p className="co-error-text" style={{ color: 'red', fontSize: '12px', marginTop: '12px' }}>{validationError}</p>}
+                                        <button className="button-primary step-next-btn" onClick={handleContinueToShipping}>
                                             Continue to Shipping
                                         </button>
                                     </div>
@@ -229,8 +377,13 @@ const page = () => {
                                             </label>
 
                                         </div>
-                                        <button className="button-primary step-next-btn pay-btn">
-                                            PAY ₹{total.toLocaleString('en-IN')}
+                                        {validationError && <p className="co-error-text" style={{ color: 'red', fontSize: '12px', marginTop: '12px', marginBottom: '12px' }}>{validationError}</p>}
+                                        <button 
+                                            className="button-primary step-next-btn pay-btn" 
+                                            onClick={handlePlaceOrder}
+                                            disabled={isPlacingOrder}
+                                        >
+                                            {isPlacingOrder ? "PLACING ORDER..." : `PLACE ORDER (COD) - ₹${total.toLocaleString('en-IN')}`}
                                         </button>
                                     </div>
                                 )}

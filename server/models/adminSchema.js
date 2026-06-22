@@ -25,7 +25,7 @@ const adminSchema = new mongoose.Schema(
 
         role: {
             type: String,
-            role: "admin",
+            default: "admin",
         },
 
         isActive: {
