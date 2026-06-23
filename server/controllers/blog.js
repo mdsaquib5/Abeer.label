@@ -25,6 +25,10 @@ export const createBlog = async (
                 );
         }
 
+        if (req.body.content) {
+            req.body.content = req.body.content.replace(/&nbsp;/g, " ");
+        }
+
         const blog =
             await Blog.create({
                 ...req.body,
@@ -209,6 +213,10 @@ export const updateBlog =
                         req.file.buffer,
                         "abeer-label/blogs"
                     );
+            }
+
+            if (req.body.content) {
+                req.body.content = req.body.content.replace(/&nbsp;/g, " ");
             }
 
             Object.assign(

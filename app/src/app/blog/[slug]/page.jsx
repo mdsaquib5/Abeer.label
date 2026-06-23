@@ -144,7 +144,9 @@ const BlogDetailPage = ({ params }) => {
 
                                 <article
                                     className="blog-details-content"
-                                    dangerouslySetInnerHTML={{ __html: singleBlog.content }}
+                                    dangerouslySetInnerHTML={{ 
+                                        __html: singleBlog.content ? singleBlog.content.replace(/&nbsp;/g, " ") : "" 
+                                    }}
                                 />
                             </>
                         )}
