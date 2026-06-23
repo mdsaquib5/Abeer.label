@@ -87,9 +87,10 @@
 
 .blog-details-content p {
     font-family: var(--font-outfit);
-    font-size: 1.1rem;
+    font-size: 1.0rem;
     line-height: 1.7;
     color: #2c2523;
+    font-weight: 300;
     margin-bottom: 16px;
 }
 
