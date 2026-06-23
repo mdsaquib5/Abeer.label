@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { Suspense } from 'react';
 import TopHeader from '@/components/pages/TopHeader';
 import SearchBar from '@/components/pages/SearchBar';
 import SideBar from '@/components/pages/SideBar';
@@ -8,7 +8,7 @@ import useShopFilters from '@/hooks/useShopFilters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoCloseOutline, IoOptionsOutline } from 'react-icons/io5';
 import { ProductSkeleton } from '@/components/shared/Skeletons';
-const ShopPage = () => {
+const ShopContent = () => {
     const {
         products,
         isLoading,
@@ -209,6 +209,21 @@ const ShopPage = () => {
                 )}
             </AnimatePresence>
         </div>
+    );
+};
+
+const ShopPage = () => {
+    return (
+        <Suspense fallback={
+            <div className="pages">
+                <TopHeader />
+                <div className="container" style={{ padding: "100px 0", textAlign: "center", color: "var(--accent)" }}>
+                    Loading Shop...
+                </div>
+            </div>
+        }>
+            <ShopContent />
+        </Suspense>
     );
 };
 
