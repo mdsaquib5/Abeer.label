@@ -7,6 +7,9 @@ export const uploadToCloudinary = (
     resourceType = "image"
 ) => {
     return new Promise((resolve, reject) => {
+        if (!process.env.CLOUD_API_KEY) {
+            return reject(new Error("Server Configuration Error: Cloudinary API Key is missing. Please add CLOUD_API_KEY to your environment variables."));
+        }
         const uploadStream = cloudinary.uploader.upload_stream(
             {
                 folder,
