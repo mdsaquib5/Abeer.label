@@ -27,8 +27,6 @@
 }
 
 .my-orders-list {
-    max-width: 950px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -210,24 +208,32 @@
     margin: 0 auto;
 }
 
-.my-orders-tracker::before {
-    content: '';
+
+
+.my-orders-tracker-line-container {
     position: absolute;
     top: 15px;
-    left: 20px;
-    right: 20px;
+    left: 40px;
+    right: 40px;
     height: 3px;
-    background: #eae3db;
     z-index: 1;
 }
 
-.my-orders-tracker-progress {
+.my-orders-tracker-bg-line {
+    width: 100%;
+    height: 100%;
+    background: #eae3db;
     position: absolute;
-    top: 15px;
-    left: 20px;
-    height: 3px;
+    top: 0;
+    left: 0;
+}
+
+.my-orders-tracker-progress-line {
+    height: 100%;
     background: var(--primary);
-    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
     transition: width 0.4s ease;
 }
 
@@ -329,6 +335,11 @@
     font-weight: 500;
     color: var(--primary);
     margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .my-orders-item-meta {
@@ -358,10 +369,13 @@
 }
 
 .my-orders-shipping-section {
-    font-family: var(--font-outfit);
-    font-size: 0.85rem;
-    color: #444;
+    font-size: 0.88rem;
+    color: #333;
     line-height: 1.6;
+    background: rgba(243, 229, 214, 0.12);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary);
 }
 
 .my-orders-shipping-title {
@@ -416,30 +430,30 @@
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .my-orders-card-header {
         padding: 16px;
     }
-    
+
     .my-orders-card-body {
         padding: 16px;
     }
-    
+
     .my-orders-tracker {
         overflow-x: auto;
         padding-bottom: 10px;
     }
-    
-    .my-orders-tracker::before,
-    .my-orders-tracker-progress {
-        display: none; /* Hide progress bar on small devices where steps are squeezed */
+
+    .my-orders-tracker-line-container {
+        display: none;
+        /* Hide progress bar lines on small devices where steps are squeezed */
     }
-    
+
     .my-orders-tracker {
         justify-content: flex-start;
         gap: 12px;
     }
-    
+
     .my-orders-tracker-step {
         width: auto;
         flex-direction: row;
@@ -449,24 +463,24 @@
         border-radius: 50px;
         border: 1px solid #eae3db;
     }
-    
+
     .my-orders-tracker-dot {
         width: 18px;
         height: 18px;
         font-size: 0.6rem;
         border-width: 1px;
     }
-    
+
     .my-orders-tracker-label {
         margin-top: 0;
         font-size: 0.65rem;
     }
-    
+
     .my-orders-tracker-step.completed {
         background: rgba(77, 38, 24, 0.05);
         border-color: rgba(77, 38, 24, 0.15);
     }
-    
+
     .my-orders-tracker-step.active {
         background: rgba(77, 38, 24, 0.1);
         border-color: var(--primary);
