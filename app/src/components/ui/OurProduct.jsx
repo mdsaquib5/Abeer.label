@@ -8,18 +8,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-
-const ProductSkeleton = () => (
-    <div className="product-card skeleton" style={{ animation: "pulse 1.5s infinite ease-in-out" }}>
-        <div className="product-image" style={{ background: "#1a1a1a", height: "320px", display: "block" }} />
-        <div className="product-details-area" style={{ padding: "16px" }}>
-            <div style={{ background: "#1a1a1a", height: "10px", width: "40%", marginBottom: "8px" }} />
-            <div style={{ background: "#1a1a1a", height: "16px", width: "70%", marginBottom: "8px" }} />
-            <div style={{ background: "#1a1a1a", height: "12px", width: "100%", marginBottom: "12px" }} />
-            <div style={{ background: "#1a1a1a", height: "16px", width: "30%" }} />
-        </div>
-    </div>
-);
+import { ProductSkeleton } from "@/components/shared/Skeletons";
 
 const OurProduct = () => {
     const { products, loadProducts, isLoading } = useProductStore();

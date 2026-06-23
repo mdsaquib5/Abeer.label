@@ -4313,13 +4313,7 @@
     margin-top: 20px;
 }
 
-.author-detail img {
-    width: 60px;
-    height: 60px;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    object-fit: cover;
-}
+
 
 .name-date {
     display: flex;
@@ -4480,4 +4474,117 @@
     padding: 12px 28px;
     text-decoration: none;
     display: inline-block;
+}
+
+/* Blog Styles */
+.no-blogs-message {
+    text-align: center;
+    color: var(--accent);
+    padding: 40px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.6; }
+}
+
+/* Product Details Page Utilities */
+.pd-loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 450px;
+}
+.pd-loading-text {
+    color: var(--white);
+    opacity: 0.6;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.pd-not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 450px;
+    gap: 10px;
+}
+.pd-not-found-title {
+    color: var(--white);
+}
+.pd-not-found-desc {
+    color: var(--accent);
+}
+.pd-shipping-note {
+    margin-top: 16px;
+    color: var(--accent);
+    font-size: 13px;
+}
+.pd-media-cover {
+    object-fit: cover;
+}
+.pd-media-contain {
+    object-fit: contain;
+}
+.pd-media-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.pd-lightbox-video {
+    width: 100%;
+    height: 100%;
+    max-height: 90vh;
+}
+.zoom-btn.pd-zoom-btn-z {
+    z-index: 5;
+}
+.pd-media-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 0;
+}
+.pd-media-item.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+.pd-lightbox-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pd-lightbox-item.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+/* Category Styles */
+.category-container {
+    position: relative;
+}
+.category-slider-wrapper {
+    margin-top: 50px;
+}
+.category-skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+.no-categories-message {
+    text-align: center;
+    color: var(--accent);
+    padding: 40px;
 }

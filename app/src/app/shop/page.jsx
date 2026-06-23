@@ -7,7 +7,7 @@ import ProductCard from '@/components/shared/ProductCard';
 import useShopFilters from '@/hooks/useShopFilters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoCloseOutline, IoOptionsOutline } from 'react-icons/io5';
-
+import { ProductSkeleton } from '@/components/shared/Skeletons';
 const ShopPage = () => {
     const {
         products,
@@ -106,15 +106,7 @@ const ShopPage = () => {
                             {isLoading ? (
                                 <div className="shop-products-grid">
                                     {[1, 2, 3, 4, 5, 6].map((num) => (
-                                        <div key={num} className="product-card skeleton" style={{ animation: "pulse 1.5s infinite ease-in-out" }}>
-                                            <div className="product-image" style={{ background: "#1a1a1a", height: "300px" }} />
-                                            <div className="product-details-area" style={{ padding: "16px" }}>
-                                                <div style={{ background: "#1a1a1a", height: "10px", width: "40%", marginBottom: "8px" }} />
-                                                <div style={{ background: "#1a1a1a", height: "16px", width: "70%", marginBottom: "8px" }} />
-                                                <div style={{ background: "#1a1a1a", height: "12px", width: "100%", marginBottom: "12px" }} />
-                                                <div style={{ background: "#1a1a1a", height: "16px", width: "30%" }} />
-                                            </div>
-                                        </div>
+                                        <ProductSkeleton key={num} />
                                     ))}
                                 </div>
                             ) : sortedProducts.length > 0 ? (

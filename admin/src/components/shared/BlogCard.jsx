@@ -6,7 +6,7 @@ const BlogCard = ({ item }) => {
     return (
         <div className="blog-card">
             <div className="blog-img">
-                <Image src={item.img || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=640&auto=format&fit=crop"} alt="blog" width={600} height={400} style={{ objectFit: 'cover' }} />
+                <Image src={item.img || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=640&auto=format&fit=crop"} alt="blog" width={600} height={400} style={{ width: '100%', height: 'auto', objectFit: 'cover' }} />
                 <Link href={item.blogLink} className="blog-icon"><HiOutlineArrowLongRight /></Link>
             </div>
             <div className="blog-content">

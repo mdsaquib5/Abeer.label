@@ -178,100 +178,100 @@ const page = () => {
                                     <div className="step-content">
                                         <div className="form-grid">
                                             <div className="form-group full-width">
-                                                <input 
-                                                    type="email" 
+                                                <input
+                                                    type="email"
                                                     name="email"
-                                                    placeholder="Email Address" 
+                                                    placeholder="Email Address"
                                                     value={formData.email}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="firstName"
-                                                    placeholder="First Name" 
+                                                    placeholder="First Name"
                                                     value={formData.firstName}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="lastName"
-                                                    placeholder="Last Name" 
+                                                    placeholder="Last Name"
                                                     value={formData.lastName}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group full-width">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="address"
-                                                    placeholder="Address" 
+                                                    placeholder="Address"
                                                     value={formData.address}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group full-width">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="apartment"
-                                                    placeholder="Apartment, suite, etc. (optional)" 
+                                                    placeholder="Apartment, suite, etc. (optional)"
                                                     value={formData.apartment}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="city"
-                                                    placeholder="City" 
+                                                    placeholder="City"
                                                     value={formData.city}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="state"
-                                                    placeholder="State" 
+                                                    placeholder="State"
                                                     value={formData.state}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="pincode"
-                                                    placeholder="Postal Code" 
+                                                    placeholder="Postal Code"
                                                     value={formData.pincode}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <input 
-                                                    type="tel" 
+                                                <input
+                                                    type="tel"
                                                     name="phone"
-                                                    placeholder="Phone Number" 
+                                                    placeholder="Phone Number"
                                                     value={formData.phone}
                                                     onChange={handleInputChange}
-                                                    className="co-input" 
+                                                    className="co-input"
                                                     required
                                                 />
                                             </div>
@@ -378,8 +378,8 @@ const page = () => {
 
                                         </div>
                                         {validationError && <p className="co-error-text" style={{ color: 'red', fontSize: '12px', marginTop: '12px', marginBottom: '12px' }}>{validationError}</p>}
-                                        <button 
-                                            className="button-primary step-next-btn pay-btn" 
+                                        <button
+                                            className="button-primary step-next-btn pay-btn"
                                             onClick={handlePlaceOrder}
                                             disabled={isPlacingOrder}
                                         >

@@ -1,8 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import useProductStore from '@/store/productStore';
+import { useSearchParams } from 'next/navigation';
 
 export default function useShopFilters() {
     const { products, loadProducts, isLoading } = useProductStore();
+    const searchParams = useSearchParams();
+    const categoryParam = searchParams ? searchParams.get('category') : null;
 
     const maxPriceLimit = useMemo(() => {
         if (!products.length) return 5000;
@@ -10,7 +13,7 @@ export default function useShopFilters() {
     }, [products]);
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [selectedCategory, setSelectedCategory] = useState(categoryParam || "All");
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedPriceRange, setSelectedPriceRange] = useState(5000);
     const [sortBy, setSortBy] = useState("default");
@@ -21,9 +24,18 @@ export default function useShopFilters() {
     const [tempPriceRange, setTempPriceRange] = useState(selectedPriceRange);
     const [tempSortBy, setTempSortBy] = useState(sortBy);
 
+    // Sync selectedCategory when category URL search param changes
+    useEffect(() => {
+        if (categoryParam) {
+            setSelectedCategory(categoryParam);
+        } else {
+            setSelectedCategory("All");
+        }
+    }, [categoryParam]);
+
     // Fetch live products from DB on mount
     useEffect(() => {
-        loadProducts();
+        loadProducts({ limit: 1000 });
     }, [loadProducts]);
 
     // Keep the price range slider synced with the loaded products' max price

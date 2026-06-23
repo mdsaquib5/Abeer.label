@@ -1,5 +1,6 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
+import useCategoryStore from '@/store/categoryStore';
 
 const SideBar = ({
     products = [],
@@ -12,7 +13,18 @@ const SideBar = ({
     maxPriceLimit,
     onClearAll
 }) => {
-    const categories = ["All", ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
+    const { categories: dbCategories, loadCategories } = useCategoryStore();
+
+    useEffect(() => {
+        loadCategories("product");
+    }, [loadCategories]);
+
+    const categories = React.useMemo(() => {
+        if (dbCategories.length > 0) {
+            return ["All", ...dbCategories.map(c => c.name)];
+        }
+        return ["All", ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
+    }, [dbCategories, products]);
     const sizes = ["XS", "S", "M", "L", "XL", "2XL"];
 
     const getCategoryCount = (category) => {

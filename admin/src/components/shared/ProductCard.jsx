@@ -39,8 +39,8 @@ const ProductCard = ({ item }) => {
                         src={imageUrl}
                         alt={item.name}
                         className="product-img"
-                        width={400}
-                        height={400}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 30vw"
                         style={{ objectFit: "cover" }}
                     />
                 ) : (

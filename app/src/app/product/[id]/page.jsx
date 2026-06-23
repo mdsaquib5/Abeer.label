@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
-import { notFound, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import useProductStore from '@/store/productStore';
 import useCartStore from '@/store/cartStore';
 import { toast } from 'sonner';
@@ -17,16 +17,13 @@ import {
     IoLeafOutline,
     IoCarOutline,
     IoRefreshOutline,
-    IoWaterOutline,
-    IoColorWandOutline,
-    IoSnowOutline,
-    IoBagHandleOutline,
     IoExpandOutline,
     IoPlayCircleOutline,
     IoCloseOutline,
 } from 'react-icons/io5';
 import { use, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DescriptionTab, CompositionTab, CareTab, ShippingTab } from '@/components/pages/ProductTabs';
 
 const TABS = [
     { key: 'description', label: 'Description' },
@@ -129,8 +126,8 @@ const ProductDetailPage = ({ params }) => {
         return (
             <div className="pages">
                 <TopHeader />
-                <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "450px" }}>
-                    <div style={{ color: "var(--white)", opacity: 0.6, fontSize: "16px", textTransform: "uppercase", letterSpacing: "1px" }}>Loading Product Details...</div>
+                <div className="container pd-loading-container">
+                    <div className="pd-loading-text">Loading Product Details...</div>
                 </div>
             </div>
         );
@@ -140,9 +137,9 @@ const ProductDetailPage = ({ params }) => {
         return (
             <div className="pages">
                 <TopHeader />
-                <div className="container" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "450px", gap: "10px" }}>
-                    <h3 style={{ color: "var(--white)" }}>Product Not Found</h3>
-                    <p style={{ color: "var(--accent)" }}>The product you are looking for might have been removed or is currently unavailable.</p>
+                <div className="container pd-not-found-container">
+                    <h3 className="pd-not-found-title">Product Not Found</h3>
+                    <p className="pd-not-found-desc">The product you are looking for might have been removed or is currently unavailable.</p>
                 </div>
             </div>
         );
@@ -152,50 +149,7 @@ const ProductDetailPage = ({ params }) => {
         ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
         : null;
 
-    const tabContent = {
-        description: (
-            <div className="pd-tab-content-inner">
-                <p>{product.description}</p>
-                {product.fit && (
-                    <div className="pd-tab-details-list">
-                        <div className="pd-tab-detail-row"><span>Fit</span><span>{product.fit}</span></div>
-                        <div className="pd-tab-detail-row"><span>Print</span><span>{product.print}</span></div>
-                        <div className="pd-tab-detail-row"><span>Details</span><span>{product.details}</span></div>
-                    </div>
-                )}
-            </div>
-        ),
-        composition: (
-            <div className="pd-tab-content-inner">
-                <div className="pd-tab-details-list">
-                    <div className="pd-tab-detail-row"><span>Composition</span><span>{product.composition}</span></div>
-                    <div className="pd-tab-detail-row"><span>Lining</span><span>{product.lining}</span></div>
-                </div>
-            </div>
-        ),
-        care: (
-            <div className="pd-tab-content-inner">
-                <p>{product.care}</p>
-                <ul className="pd-care-list">
-                    <li><IoWaterOutline className="care-icon" /><span>Do not machine wash</span></li>
-                    <li><IoColorWandOutline className="care-icon" /><span>Iron on reverse side only</span></li>
-                    <li><IoSnowOutline className="care-icon" /><span>Store in a cool, dry place</span></li>
-                    <li><IoBagHandleOutline className="care-icon" /><span>Keep in the muslin bag provided</span></li>
-                </ul>
-            </div>
-        ),
-        shipping: (
-            <div className="pd-tab-content-inner">
-                <div className="pd-tab-details-list">
-                    <div className="pd-tab-detail-row"><span>Dispatch</span><span>Within 2–3 business days</span></div>
-                    <div className="pd-tab-detail-row"><span>Delivery</span><span>5–7 business days across India</span></div>
-                    <div className="pd-tab-detail-row"><span>Returns</span><span>10-day hassle-free returns</span></div>
-                    <div className="pd-tab-detail-row"><span>Exchange</span><span>Size exchange available</span></div>
-                </div>
-                <p style={{ marginTop: '16px', color: 'var(--accent)', fontSize: '13px' }}>Free shipping on orders above ₹999. For international shipping, please contact us on WhatsApp.</p>
-            </div>
-        ),
-    };
+
 
     return (
         <div className="pages">
@@ -239,7 +193,7 @@ const ProductDetailPage = ({ params }) => {
                                                         fill
                                                         priority={globalIdx < 5}
                                                         sizes="80px"
-                                                        style={{ objectFit: 'cover' }}
+                                                        className="pd-media-cover"
                                                     />
                                                 ) : (
                                                     <div className="thumbnail-video-icon">
@@ -273,14 +227,7 @@ const ProductDetailPage = ({ params }) => {
                                     {media.map((item, idx) => (
                                         <div
                                             key={idx}
-                                            style={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                opacity: activeImage === idx ? 1 : 0,
-                                                pointerEvents: activeImage === idx ? 'auto' : 'none',
-                                                transition: 'opacity 0.2s ease-in-out',
-                                                zIndex: activeImage === idx ? 1 : 0
-                                            }}
+                                            className={`pd-media-item ${activeImage === idx ? 'active' : ''}`}
                                         >
                                             {item.type === 'image' ? (
                                                 <Image
@@ -289,7 +236,7 @@ const ProductDetailPage = ({ params }) => {
                                                     fill
                                                     priority={idx === 0}
                                                     sizes="(max-width: 768px) 100vw, 55vw"
-                                                    style={{ objectFit: 'cover' }}
+                                                    className="pd-media-cover"
                                                 />
                                             ) : (
                                                 <video
@@ -298,12 +245,12 @@ const ProductDetailPage = ({ params }) => {
                                                     muted
                                                     loop
                                                     playsInline
-                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    className="pd-media-video"
                                                 />
                                             )}
                                         </div>
                                     ))}
-                                    <button className="zoom-btn" onClick={() => setIsLightboxOpen(true)} aria-label="Open Lightbox" style={{ zIndex: 5 }}>
+                                    <button className="zoom-btn pd-zoom-btn-z" onClick={() => setIsLightboxOpen(true)} aria-label="Open Lightbox">
                                         <IoExpandOutline />
                                     </button>
                                 </div>
@@ -440,7 +387,10 @@ const ProductDetailPage = ({ params }) => {
                         </div>
                         <div className="pd-tab-content">
                             <div className="pd-tab-content-centered">
-                                {tabContent[activeTab]}
+                                {activeTab === 'description' && <DescriptionTab product={product} />}
+                                {activeTab === 'composition' && <CompositionTab product={product} />}
+                                {activeTab === 'care' && <CareTab product={product} />}
+                                {activeTab === 'shipping' && <ShippingTab />}
                             </div>
                         </div>
                     </div>
@@ -485,24 +435,14 @@ const ProductDetailPage = ({ params }) => {
                             {media.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        opacity: activeImage === idx ? 1 : 0,
-                                        pointerEvents: activeImage === idx ? 'auto' : 'none',
-                                        transition: 'opacity 0.2s ease-in-out',
-                                        zIndex: activeImage === idx ? 1 : 0,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}
+                                    className={`pd-lightbox-item ${activeImage === idx ? 'active' : ''}`}
                                 >
                                     {item.type === 'image' ? (
                                         <Image
                                             src={item.url}
                                             alt={`${product.name} zoom ${idx + 1}`}
                                             fill
-                                            style={{ objectFit: 'contain' }}
+                                            className="pd-media-contain"
                                         />
                                     ) : (
                                         <video
@@ -511,7 +451,7 @@ const ProductDetailPage = ({ params }) => {
                                             muted
                                             loop
                                             playsInline
-                                            style={{ width: '100%', height: '100%', maxHeight: '90vh' }}
+                                            className="pd-lightbox-video"
                                         />
                                     )}
                                 </div>

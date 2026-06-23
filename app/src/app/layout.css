@@ -29,14 +29,13 @@ body {
     overflow-x: hidden;
 }
 
-section {
+section:not([aria-label*="Notifications"]) {
     padding-block: 80px;
 }
 
-section[aria-label="Notifications"] {
-    padding-block: 0 !important;
+section[aria-label*="Notifications"] {
+    padding: 0 !important;
 }
-
 
 input,
 textarea,
