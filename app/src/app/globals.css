@@ -112,6 +112,7 @@
 .navbar nav ul li {
     height: fit-content;
     line-height: 0.9;
+    list-style: none;
 }
 
 .navbar nav ul li a {
