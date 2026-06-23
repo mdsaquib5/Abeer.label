@@ -52,14 +52,14 @@ const BlogDetailPage = ({ params }) => {
                     ]}
                 />
                 <div className="shop-page-wrapper">
-                    <div className="container" style={{ textAlign: "center", paddingBlock: "100px" }}>
-                        <h2 style={{ fontFamily: "var(--font-cinzel)", color: "var(--primary)", marginBottom: "20px" }}>
+                    <div className="container blog-details-error-wrapper">
+                        <h2 className="blog-details-error-title">
                             Blog Post Not Found
                         </h2>
-                        <p style={{ fontFamily: "var(--font-outfit)", color: "var(--accent)", marginBottom: "30px" }}>
+                        <p className="blog-details-error-text">
                             {error || "The article you are looking for might have been removed or is temporarily unavailable."}
                         </p>
-                        <Link href="/blog" className="back-btn" style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--primary)", fontWeight: "500" }}>
+                        <Link href="/blog" className="blog-details-back-link">
                             <FiChevronLeft /> Back to Blogs
                         </Link>
                     </div>
@@ -81,22 +81,22 @@ const BlogDetailPage = ({ params }) => {
                 <div className="container">
                     <div className="blog-details-card">
                         {/* Go back */}
-                        <div style={{ marginBottom: "30px" }}>
-                            <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--primary)", fontWeight: "500", fontFamily: "var(--font-outfit)", fontSize: "0.95rem" }}>
+                        <div className="blog-details-back-container">
+                            <Link href="/blog" className="blog-details-back-link">
                                 <FiChevronLeft /> Back to Blogs
                             </Link>
                         </div>
 
                         {isSingleLoading || !singleBlog ? (
                             /* SKELETON LOADING STATE */
-                            <div style={{ maxWidth: "850px", margin: "0 auto" }}>
+                            <div className="blog-details-skeleton-wrapper">
                                 <div className="blog-details-skeleton-title"></div>
                                 <div className="blog-details-skeleton-meta"></div>
                                 <div className="blog-details-skeleton-image"></div>
-                                <div className="blog-details-skeleton-text" style={{ width: "95%" }}></div>
-                                <div className="blog-details-skeleton-text" style={{ width: "100%" }}></div>
-                                <div className="blog-details-skeleton-text" style={{ width: "90%" }}></div>
-                                <div className="blog-details-skeleton-text" style={{ width: "85%" }}></div>
+                                <div className="blog-details-skeleton-text blog-details-skeleton-w95"></div>
+                                <div className="blog-details-skeleton-text blog-details-skeleton-w100"></div>
+                                <div className="blog-details-skeleton-text blog-details-skeleton-w90"></div>
+                                <div className="blog-details-skeleton-text blog-details-skeleton-w85"></div>
                             </div>
                         ) : (
                             /* BLOG CONTENT STATE */
@@ -142,7 +142,7 @@ const BlogDetailPage = ({ params }) => {
                                     </div>
                                 )}
 
-                                <article 
+                                <article
                                     className="blog-details-content"
                                     dangerouslySetInnerHTML={{ __html: singleBlog.content }}
                                 />
