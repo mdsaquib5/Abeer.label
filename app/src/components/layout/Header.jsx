@@ -101,12 +101,35 @@ const Header = () => {
                         <div className="cart-icon">
                             {isHydrated && (
                                 isAuthenticated ? (
-                                    <span 
-                                        className="user-greet" 
-                                        style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)' }}
-                                    >
-                                        Hi, {user?.name?.split(' ')[0]}
-                                    </span>
+                                    <div className="user-menu-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                                        <span 
+                                            className="user-greet" 
+                                            style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)', cursor: 'pointer' }}
+                                        >
+                                            Hi, {user?.name?.split(' ')[0]}
+                                        </span>
+                                        <div className="user-dropdown" style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            right: 0,
+                                            backgroundColor: 'var(--white)',
+                                            boxShadow: '0 8px 24px rgba(77, 38, 24, 0.1)',
+                                            border: '1px solid rgba(77, 38, 24, 0.08)',
+                                            borderRadius: '6px',
+                                            padding: '8px 0',
+                                            minWidth: '130px',
+                                            zIndex: 10,
+                                            display: 'none'
+                                        }}>
+                                            <Link href="/my-orders" style={{ display: 'block', padding: '8px 16px', fontSize: '0.85rem', color: 'var(--primary)', fontFamily: 'var(--font-outfit)' }}>My Orders</Link>
+                                            <button onClick={() => logout()} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', fontSize: '0.85rem', color: '#dc2626', fontFamily: 'var(--font-outfit)', background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
+                                        </div>
+                                        <style>{`
+                                            .user-menu-wrapper:hover .user-dropdown {
+                                                display: block !important;
+                                            }
+                                        `}</style>
+                                    </div>
                                 ) : (
                                     <Link href={'/login'}> <IoPersonOutline /> </Link>
                                 )
@@ -149,6 +172,28 @@ const Header = () => {
 
                             <div className="drawer-content">
                                 <Nav onClose={() => setIsMenuOpen(false)} />
+                                {isAuthenticated && (
+                                    <button 
+                                        onClick={() => {
+                                            logout();
+                                            setIsMenuOpen(false);
+                                        }} 
+                                        style={{ 
+                                            display: 'block', 
+                                            width: '100%', 
+                                            textAlign: 'left', 
+                                            padding: '12px 20px', 
+                                            fontSize: '1rem', 
+                                            color: '#dc2626', 
+                                            fontFamily: 'var(--font-outfit)',
+                                            marginTop: '20px',
+                                            borderTop: '1px solid rgba(77, 38, 24, 0.08)',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        Logout
+                                    </button>
+                                )}
                             </div>
 
                             <div className="drawer-footer">

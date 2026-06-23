@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import NavLink from "next/link";
 import { FiChevronDown } from "react-icons/fi";
 import { useMediaQuery } from 'react-responsive';
+import useAuthStore from "@/store/authStore";
 
 const Nav = ({ onClose }) => {
+    const { isAuthenticated } = useAuthStore();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1200px)' });
 
@@ -53,6 +55,14 @@ const Nav = ({ onClose }) => {
                         </ul>
                     </div>
                 </li>
+                <li>
+                    <NavLink href="/blog" onClick={handleLinkClick}>Blog</NavLink>
+                </li>
+                {isAuthenticated && (
+                    <li>
+                        <NavLink href="/my-orders" onClick={handleLinkClick}>My Orders</NavLink>
+                    </li>
+                )}
             </ul>
         </nav>
     );
