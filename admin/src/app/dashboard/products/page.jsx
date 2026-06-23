@@ -14,12 +14,7 @@ import {
     BsBoxSeam,
 } from "react-icons/bs";
 import useProductStore from "@/store/productStore";
-
-const CATEGORIES = [
-    "Ethnic Dresses",
-    "Farshi Salwars Collection",
-    "Kurti Sets",
-];
+import useCategoryStore from "@/store/categoryStore";
 
 const STATUS_TABS = [
     { label: "All", value: "" },
@@ -45,12 +40,15 @@ export default function ProductsPage() {
         loadProducts,
     } = useProductStore();
 
+    const { categories, loadCategories } = useCategoryStore();
+
     const [searchInput, setSearchInput] = useState("");
     const [debounceTimer, setDebounceTimer] = useState(null);
 
     // Initial load – show all statuses for admin
     useEffect(() => {
         loadProducts({ status: "" });
+        loadCategories("product");
     }, []);
 
     // Debounced search
@@ -132,8 +130,8 @@ export default function ProductsPage() {
                             onChange={(e) => loadProducts({ category: e.target.value, page: 1 })}
                         >
                             <option value="">All Categories</option>
-                            {CATEGORIES.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
+                            {categories.map((cat) => (
+                                <option key={cat._id} value={cat.name}>{cat.name}</option>
                             ))}
                         </select>
                         <BsChevronDown className="pf-select-arrow" />

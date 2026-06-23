@@ -1,18 +1,23 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DashboardTitles from "@/components/layout/DashboardTitles";
 import { BsCloudUpload, BsPlusLg, BsTrash } from "react-icons/bs";
 import { toast } from "sonner";
 import { createProduct } from "@/lib/productApi";
+import useCategoryStore from "@/store/categoryStore";
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL", "2XL"];
-const CATEGORIES = ["Ethnic Dresses", "Farshi Salwars Collection", "Kurti Sets"];
 
 export default function AddProductPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const { categories, loadCategories } = useCategoryStore();
+
+    useEffect(() => {
+        loadCategories("product");
+    }, [loadCategories]);
 
     // Form state
     const [name, setName] = useState("");
@@ -20,7 +25,7 @@ export default function AddProductPage() {
     const [price, setPrice] = useState("");
     const [originalPrice, setOriginalPrice] = useState("");
     const [stock, setStock] = useState("");
-    const [category, setCategory] = useState(CATEGORIES[0]);
+    const [category, setCategory] = useState("");
     const [collectionName, setCollectionName] = useState("");
     const [aspectRatio, setAspectRatio] = useState("portrait");
     const [selectedSizes, setSelectedSizes] = useState(["S", "M", "L"]);
@@ -247,8 +252,9 @@ export default function AddProductPage() {
                                         onChange={(e) => setCategory(e.target.value)}
                                         disabled={isLoading}
                                     >
-                                        {CATEGORIES.map((cat) => (
-                                            <option key={cat} value={cat}>{cat}</option>
+                                        <option value="" disabled>Select Category</option>
+                                        {categories.map((cat) => (
+                                            <option key={cat._id} value={cat.name}>{cat.name}</option>
                                         ))}
                                     </select>
                                 </div>

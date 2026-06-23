@@ -6,6 +6,8 @@ import adminRoutes from './routes/admin.js';
 import productRoutes from './routes/product.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
+import blogRoutes from './routes/blog.js';
+import categoryRoutes from './routes/category.js';
 
 const app = express();
 
@@ -46,6 +48,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/blogs', blogRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Root route
 app.get('/', (req, res) => {

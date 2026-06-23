@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import DashboardTitles from "@/components/layout/DashboardTitles";
 import Link from "next/link";
 import { BsArrowLeft, BsImage } from "react-icons/bs";
-import { useRouter } from "next/navigation";
-import { createBlog } from "@/lib/blogApi";
+import { useRouter, useParams } from "next/navigation";
+import { getBlogBySlug, updateBlog } from "@/lib/blogApi";
 import useCategoryStore from "@/store/categoryStore";
 import dynamic from 'next/dynamic';
 import { toast } from "sonner";
@@ -14,12 +14,16 @@ import 'react-quill-new/dist/quill.snow.css';
 // Dynamically import react-quill to prevent SSR issues
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-export default function AddBlogPage() {
+export default function EditBlogPage() {
     const router = useRouter();
+    const { slug } = useParams();
     const { categories, loadCategories } = useCategoryStore();
+    
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const [status, setStatus] = useState("draft");
     const [charCount, setCharCount] = useState(0);
-    const [isSaving, setIsSaving] = useState(false);
+    const [blogId, setBlogId] = useState(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -34,6 +38,38 @@ export default function AddBlogPage() {
     useEffect(() => {
         loadCategories("blog");
     }, [loadCategories]);
+
+    useEffect(() => {
+        const fetchBlog = async () => {
+            try {
+                const res = await getBlogBySlug(slug);
+                if (res.success && res.data) {
+                    const blog = res.data;
+                    setBlogId(blog._id);
+                    setFormData({
+                        title: blog.title || "",
+                        excerpt: blog.excerpt || "",
+                        content: blog.content || "",
+                        author: blog.author || "Abeer Team",
+                        category: blog.category || "Fashion",
+                        coverImage: null,
+                        coverImagePreview: blog.coverImage?.url || null,
+                    });
+                    setStatus(blog.status || "draft");
+                    setCharCount((blog.excerpt || "").length);
+                }
+            } catch (error) {
+                toast.error("Failed to load blog data.");
+                router.push("/dashboard/blogs");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (slug) {
+            fetchBlog();
+        }
+    }, [slug, router]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -60,24 +96,29 @@ export default function AddBlogPage() {
             data.append("author", formData.author);
             data.append("category", formData.category);
             data.append("status", status);
+            
             if (formData.coverImage) {
                 data.append("coverImage", formData.coverImage);
             }
 
-            await createBlog(data);
-            toast.success("Blog post created successfully!");
+            await updateBlog(blogId, data);
+            toast.success("Blog post updated successfully!");
             router.push("/dashboard/blogs");
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to create blog");
+            toast.error(error.response?.data?.message || "Failed to update blog");
         } finally {
             setIsSaving(false);
         }
     };
 
+    if (isLoading) {
+        return <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>Loading blog editor...</div>;
+    }
+
     return (
         <div className="dashboard-page">
             <div className="add-blog-header">
-                <DashboardTitles title="Write New Blog Post" subtitle="Content • New Post" />
+                <DashboardTitles title="Edit Blog Post" subtitle="Content • Edit Post" />
                 <Link href="/dashboard/blogs" className="back-btn">
                     <BsArrowLeft /> Back to Blogs
                 </Link>
@@ -196,7 +237,7 @@ export default function AddBlogPage() {
                             disabled={isSaving}
                             style={{ opacity: isSaving ? 0.7 : 1 }}
                         >
-                            {isSaving ? "Saving..." : "Save Blog Post"}
+                            {isSaving ? "Saving Updates..." : "Update Blog Post"}
                         </button>
                     </div>
 

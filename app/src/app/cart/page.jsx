@@ -41,8 +41,8 @@ const CartPage = () => {
                     breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Cart', href: null }]}
                 />
                 <div className="shop-page-wrapper">
-                    <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
-                        <div style={{ color: "var(--white)", opacity: 0.6, fontSize: "14px", textTransform: "uppercase", letterSpacing: "1px" }}>
+                    <div className="container cart-loading-container">
+                        <div className="cart-loading-text">
                             Loading your bag details...
                         </div>
                     </div>
@@ -58,10 +58,10 @@ const CartPage = () => {
                     breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Cart', href: null }]}
                 />
                 <div className="shop-page-wrapper">
-                    <div className="container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "400px", gap: "20px" }}>
-                        <h2 style={{ color: "var(--white)", fontFamily: "var(--font-cinzel)" }}>Your Bag is Empty</h2>
-                        <p style={{ color: "var(--accent)", fontSize: "14px" }}>Add some premium ethnic collections to your wardrobe.</p>
-                        <Link href="/shop" className="button-primary" style={{ padding: "12px 28px", textDecoration: "none", display: "inline-block" }}>
+                    <div className="container cart-empty-container">
+                        <h2 className="cart-empty-title">Your Bag is Empty</h2>
+                        <p className="cart-empty-message">Add some premium ethnic collections to your wardrobe.</p>
+                        <Link href="/shop" className="button-primary cart-empty-button">
                             Continue Shopping
                         </Link>
                     </div>

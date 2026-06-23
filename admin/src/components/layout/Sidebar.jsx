@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BsBoxSeam, BsBoxes, BsFileEarmarkPlus, BsMegaphone } from "react-icons/bs";
+import { BsBoxSeam, BsBoxes, BsFileEarmarkPlus, BsMegaphone, BsTags } from "react-icons/bs";
 import { CiLogout, CiDeliveryTruck, CiViewList, CiGrid41 } from "react-icons/ci";
 import Logo from "../shared/Logo";
 import useAuthStore from "@/store/authStore";
@@ -21,6 +21,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "Dashboard Overview", href: "/dashboard", icon: CiGrid41, exact: true },
     { name: "Add New Product", href: "/dashboard/products/add", icon: BsBoxes, exact: true },
     { name: "Product Catalog", href: "/dashboard/products", icon: BsBoxSeam, exact: true },
+    { name: "Manage Categories", href: "/dashboard/categories", icon: BsTags, exact: true },
     { name: "Customer Orders", href: "/dashboard/orders", icon: CiDeliveryTruck, exact: false },
     { name: "Write a Story", href: "/dashboard/blogs/add", icon: BsFileEarmarkPlus, exact: true },
     { name: "Abeer Stories", href: "/dashboard/blogs", icon: CiViewList, exact: true },

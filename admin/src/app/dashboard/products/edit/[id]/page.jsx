@@ -6,9 +6,9 @@ import DashboardTitles from "@/components/layout/DashboardTitles";
 import { BsCloudUpload, BsCheckLg, BsTrash } from "react-icons/bs";
 import { toast } from "sonner";
 import { fetchProductById, updateProduct } from "@/lib/productApi";
+import useCategoryStore from "@/store/categoryStore";
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL", "2XL"];
-const CATEGORIES = ["Ethnic Dresses", "Farshi Salwars Collection", "Kurti Sets"];
 
 export default function EditProductPage({ params }) {
     const { id } = use(params);
@@ -24,7 +24,7 @@ export default function EditProductPage({ params }) {
     const [price, setPrice] = useState("");
     const [originalPrice, setOriginalPrice] = useState("");
     const [stock, setStock] = useState("");
-    const [category, setCategory] = useState(CATEGORIES[0]);
+    const [category, setCategory] = useState("");
     const [collectionName, setCollectionName] = useState("");
     const [aspectRatio, setAspectRatio] = useState("portrait");
     const [selectedSizes, setSelectedSizes] = useState([]);
@@ -52,6 +52,12 @@ export default function EditProductPage({ params }) {
     const imageInputRef = useRef(null);
     const videoInputRef = useRef(null);
 
+    const { categories, loadCategories } = useCategoryStore();
+
+    useEffect(() => {
+        loadCategories("product");
+    }, [loadCategories]);
+
     // Fetch product details on mount
     useEffect(() => {
         const loadProduct = async () => {
@@ -65,7 +71,7 @@ export default function EditProductPage({ params }) {
                     setPrice(product.price || "");
                     setOriginalPrice(product.originalPrice || "");
                     setStock(product.stock || "");
-                    setCategory(product.category || CATEGORIES[0]);
+                    setCategory(product.category || "");
                     setCollectionName(product.collectionName || "");
                     setAspectRatio(product.aspectRatio || "portrait");
                     setSelectedSizes(product.sizes || []);
@@ -337,8 +343,9 @@ export default function EditProductPage({ params }) {
                                         onChange={(e) => setCategory(e.target.value)}
                                         disabled={isLoading}
                                     >
-                                        {CATEGORIES.map((cat) => (
-                                            <option key={cat} value={cat}>{cat}</option>
+                                        <option value="" disabled>Select Category</option>
+                                        {categories.map((cat) => (
+                                            <option key={cat._id} value={cat.name}>{cat.name}</option>
                                         ))}
                                     </select>
                                 </div>

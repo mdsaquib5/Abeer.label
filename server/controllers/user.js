@@ -160,3 +160,20 @@ export const logout = async (req, res) => {
         message: "Logged out successfully",
     });
 };
+
+// get total users (for admin)
+export const getTotalUsers = async (req, res) => {
+    try {
+        const total = await User.countDocuments({ role: "customer" });
+        return res.status(200).json({
+            success: true,
+            data: total,
+        });
+    } catch (error) {
+        console.error("Get Total Users Error:", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+};
