@@ -102,8 +102,8 @@ const Header = () => {
                             {isHydrated && (
                                 isAuthenticated ? (
                                     <div className="user-menu-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-                                        <span 
-                                            className="user-greet" 
+                                        <span
+                                            className="user-greet"
                                             style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)', cursor: 'pointer' }}
                                         >
                                             Hi, {user?.name?.split(' ')[0]}
@@ -173,23 +173,12 @@ const Header = () => {
                             <div className="drawer-content">
                                 <Nav onClose={() => setIsMenuOpen(false)} />
                                 {isAuthenticated && (
-                                    <button 
+                                    <button
                                         onClick={() => {
                                             logout();
                                             setIsMenuOpen(false);
-                                        }} 
-                                        style={{ 
-                                            display: 'block', 
-                                            width: '100%', 
-                                            textAlign: 'left', 
-                                            padding: '12px 20px', 
-                                            fontSize: '1rem', 
-                                            color: '#dc2626', 
-                                            fontFamily: 'var(--font-outfit)',
-                                            marginTop: '20px',
-                                            borderTop: '1px solid rgba(77, 38, 24, 0.08)',
-                                            cursor: 'pointer'
                                         }}
+                                        className="btn primary-btn" style={{ marginTop: '20px' }}
                                     >
                                         Logout
                                     </button>

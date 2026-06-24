@@ -89,8 +89,8 @@ const Hero = () => {
                                         <h2 className="hero-title">{slide.title}</h2>
                                         <p className="hero-para">{slide.description}</p>
                                         <div className="hero-btns">
-                                            <Link href={'/'} className="primary-btn btn">Shop Now</Link>
-                                            <Link href={'/'} className="secondary-btn btn">New Collection</Link>
+                                            <Link href={'/shop'} className="primary-btn btn">Shop Now</Link>
+                                            <Link href={'/shop'} className="secondary-btn btn">New Collection</Link>
                                         </div>
                                     </div>
                                 </div>
