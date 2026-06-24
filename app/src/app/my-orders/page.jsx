@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IoBagHandleOutline, IoLockClosedOutline } from "react-icons/io5";
-import { FiChevronRight, FiAlertTriangle } from "react-icons/fi";
+import { FiChevronRight, FiAlertTriangle, FiChevronDown, FiCheck } from "react-icons/fi";
 import useAuthStore from "@/store/authStore";
 import useOrderStore from "@/store/orderStore";
 import TopHeader from "@/components/pages/TopHeader";
@@ -17,6 +17,14 @@ const MyOrdersPage = () => {
     const { isAuthenticated, fetchMe, isLoading: authLoading } = useAuthStore();
     const { orders, isLoading: ordersLoading, loadMyOrders, error } = useOrderStore();
     const [isHydrated, setIsHydrated] = useState(false);
+    const [expandedOrders, setExpandedOrders] = useState({});
+
+    const toggleExpand = (orderId) => {
+        setExpandedOrders((prev) => ({
+            ...prev,
+            [orderId]: !prev[orderId],
+        }));
+    };
 
     useEffect(() => {
         setIsHydrated(true);
@@ -153,10 +161,13 @@ const MyOrdersPage = () => {
                                             {!isCancelled && (
                                                 <div className="my-orders-tracker-wrapper">
                                                     <div className="my-orders-tracker">
-                                                        <div
-                                                            className="my-orders-tracker-progress"
-                                                            style={{ width: `${progressWidth}%` }}
-                                                        ></div>
+                                                        <div className="my-orders-tracker-line-container">
+                                                            <div className="my-orders-tracker-bg-line"></div>
+                                                            <div
+                                                                className="my-orders-tracker-progress-line"
+                                                                style={{ width: `${progressWidth}%` }}
+                                                            ></div>
+                                                        </div>
                                                         {STATUS_STEPS.map((step, idx) => {
                                                             let stepClass = "";
                                                             if (idx < currentStepIndex) {
@@ -168,7 +179,11 @@ const MyOrdersPage = () => {
                                                             return (
                                                                 <div className={`my-orders-tracker-step ${stepClass}`} key={step}>
                                                                     <div className="my-orders-tracker-dot">
-                                                                        {idx + 1}
+                                                                        {idx < currentStepIndex ? (
+                                                                            <FiCheck style={{ fontSize: "0.95rem" }} />
+                                                                        ) : (
+                                                                            idx + 1
+                                                                        )}
                                                                     </div>
                                                                     <span className="my-orders-tracker-label">{step}</span>
                                                                 </div>
@@ -213,32 +228,45 @@ const MyOrdersPage = () => {
                                                 ))}
                                             </div>
 
-                                            {/* Expandable Info / Address & Cost Invoice Summary */}
-                                            <div className="my-orders-details-grid">
-                                                <div className="my-orders-shipping-section">
-                                                    <h5 className="my-orders-shipping-title">SHIPPING ADDRESS</h5>
-                                                    <strong>{order.shippingAddress.fullName}</strong>
-                                                    <p style={{ margin: "4px 0" }}>
-                                                        {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
-                                                    </p>
-                                                    <p style={{ margin: 0 }}>Phone: {order.shippingAddress.phone}</p>
-                                                    <p style={{ margin: 0 }}>Email: {order.shippingAddress.email}</p>
-                                                </div>
+                                            {/* Toggle Button */}
+                                            <div className="my-orders-actions">
+                                                <button
+                                                    className={`my-orders-expand-btn ${expandedOrders[order._id] ? "expanded" : ""}`}
+                                                    onClick={() => toggleExpand(order._id)}
+                                                >
+                                                    {expandedOrders[order._id] ? "Hide Order Details" : "View Order Details"}
+                                                    <FiChevronDown />
+                                                </button>
+                                            </div>
 
-                                                <div className="my-orders-summary-section">
-                                                    <div className="my-orders-summary-row">
-                                                        <span>Subtotal</span>
-                                                        <span>₹{order.subtotal?.toLocaleString("en-IN") || "0"}</span>
+                                            {/* Expandable Info / Address & Cost Invoice Summary */}
+                                            <div className={`my-orders-details-wrapper ${expandedOrders[order._id] ? "expanded" : ""}`}>
+                                                <div className="my-orders-details-grid">
+                                                    <div className="my-orders-shipping-section">
+                                                        <h5 className="my-orders-shipping-title">SHIPPING ADDRESS</h5>
+                                                        <strong>{order.shippingAddress.fullName}</strong>
+                                                        <p style={{ margin: "4px 0" }}>
+                                                            {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
+                                                        </p>
+                                                        <p style={{ margin: 0 }}>Phone: {order.shippingAddress.phone}</p>
+                                                        <p style={{ margin: 0 }}>Email: {order.shippingAddress.email}</p>
                                                     </div>
-                                                    <div className="my-orders-summary-row">
-                                                        <span>Shipping Charge</span>
-                                                        <span>
-                                                            {order.shippingCharge === 0 ? "FREE" : `₹${order.shippingCharge}`}
-                                                        </span>
-                                                    </div>
-                                                    <div className="my-orders-summary-row total">
-                                                        <span>Total Amount</span>
-                                                        <span>₹{order.totalAmount.toLocaleString("en-IN")}</span>
+
+                                                    <div className="my-orders-summary-section">
+                                                        <div className="my-orders-summary-row">
+                                                            <span>Subtotal</span>
+                                                            <span>₹{order.subtotal?.toLocaleString("en-IN") || "0"}</span>
+                                                        </div>
+                                                        <div className="my-orders-summary-row">
+                                                            <span>Shipping Charge</span>
+                                                            <span>
+                                                                {order.shippingCharge === 0 ? "FREE" : `₹${order.shippingCharge}`}
+                                                            </span>
+                                                        </div>
+                                                        <div className="my-orders-summary-row total">
+                                                            <span>Total Amount</span>
+                                                            <span>₹{order.totalAmount.toLocaleString("en-IN")}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -130,7 +130,6 @@
 }
 
 .my-orders-info-item {
-    font-family: var(--font-outfit);
     font-size: 0.85rem;
     color: var(--accent);
 }
@@ -147,12 +146,10 @@
 /* Status Badge */
 .my-orders-status-badge {
     padding: 6px 14px;
-    border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: var(--font-outfit);
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -422,6 +419,55 @@
     width: 100%;
     margin-bottom: 20px;
     animation: skeleton-pulse 1.5s infinite ease-in-out;
+}
+
+/* Expandable Details Accordion */
+.my-orders-details-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.my-orders-details-wrapper.expanded {
+    max-height: 600px;
+    /* High enough to prevent cutting off */
+}
+
+.my-orders-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(77, 38, 24, 0.05);
+}
+
+.my-orders-expand-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-outfit);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.my-orders-expand-btn:hover {
+    background: rgba(77, 38, 24, 0.04);
+}
+
+.my-orders-expand-btn svg {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.my-orders-expand-btn.expanded svg {
+    transform: rotate(180deg);
 }
 
 /* Responsive orders grid */
