@@ -6,7 +6,7 @@ import BlogCard from "@/components/shared/BlogCard";
 import Searchbar from "@/components/shared/Searchbar";
 import Pagination from "@/components/shared/Pagination";
 import Link from "next/link";
-import { BsPlusLg, BsPencil, BsTrash, BsEye } from "react-icons/bs";
+import { BsPlusLg, BsPencil, BsTrash } from "react-icons/bs";
 import useBlogStore from "@/store/blogStore";
 import { toast } from "sonner";
 
@@ -46,8 +46,8 @@ export default function BlogsPage() {
 
                 {/* Top Bar */}
                 <div className="blogs-top-bar">
-                    <Searchbar 
-                        placeholder="Search blogs..." 
+                    <Searchbar
+                        placeholder="Search blogs..."
                         onChange={(e) => setFilter('search', e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') loadBlogs();
@@ -88,7 +88,7 @@ export default function BlogsPage() {
                                             date: new Date(blog.createdAt).toLocaleDateString(),
                                         }} />
                                         <div className="blog-card-actions">
-                                            <span 
+                                            <span
                                                 className={`blog-status-badge ${blog.status?.toLowerCase()}`}
                                                 style={{ cursor: "pointer" }}
                                                 onClick={() => handleStatusToggle(blog._id, blog.status)}
@@ -96,7 +96,6 @@ export default function BlogsPage() {
                                                 {blog.status}
                                             </span>
                                             <div className="blog-action-btns">
-                                                <Link href={`http://localhost:3000/blogs/${blog.slug}`} target="_blank" className="blog-action-btn"><BsEye /></Link>
                                                 <Link href={`/dashboard/blogs/edit/${blog.slug}`} className="blog-action-btn"><BsPencil /></Link>
                                                 <button className="blog-action-btn danger" onClick={() => handleDelete(blog._id)}><BsTrash /></button>
                                             </div>
@@ -125,7 +124,7 @@ export default function BlogsPage() {
                                                 <td className="customer-name">{blog.author}</td>
                                                 <td className="order-date">{new Date(blog.createdAt).toLocaleDateString()}</td>
                                                 <td>
-                                                    <span 
+                                                    <span
                                                         className={`blog-status-badge ${blog.status?.toLowerCase()}`}
                                                         style={{ cursor: "pointer" }}
                                                         onClick={() => handleStatusToggle(blog._id, blog.status)}
@@ -135,7 +134,6 @@ export default function BlogsPage() {
                                                 </td>
                                                 <td>
                                                     <div className="blog-list-actions">
-                                                        <Link href={`http://localhost:3000/blogs/${blog.slug}`} target="_blank" className="blog-action-btn"><BsEye /></Link>
                                                         <Link href={`/dashboard/blogs/edit/${blog.slug}`} className="blog-action-btn"><BsPencil /></Link>
                                                         <button className="blog-action-btn danger" onClick={() => handleDelete(blog._id)}><BsTrash /></button>
                                                     </div>
