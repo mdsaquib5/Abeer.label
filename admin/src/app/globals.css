@@ -1073,6 +1073,8 @@ input[type="number"] {
 }
 
 .status-select.pending,
+.status-select.confirmed,
+.status-select.cancelled,
 .status-select.placed,
 .status-select.packing,
 .status-select.shipped,
