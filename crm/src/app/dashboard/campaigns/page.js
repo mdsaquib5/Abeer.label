@@ -26,7 +26,7 @@ export default function CampaignsPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.get('http://localhost:4000/api/crm/campaigns', {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -68,7 +68,7 @@ export default function CampaignsPage() {
         filterSnapshot: formData.targetSegment ? { segments: formData.targetSegment } : {}
       };
 
-      const res = await axios.post('http://localhost:4000/api/crm/campaigns', payload, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -87,7 +87,7 @@ export default function CampaignsPage() {
 
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.post(`http://localhost:4000/api/crm/campaigns/${id}/send`, {}, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns/${id}/send`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert(res.data.message);
@@ -100,7 +100,7 @@ export default function CampaignsPage() {
   const checkStatus = async (id) => {
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`http://localhost:4000/api/crm/campaigns/${id}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {

@@ -20,7 +20,7 @@ export default function Login() {
 
     try {
       // Backend is on port 4000
-      const res = await axios.post('http://localhost:4000/api/crm/auth/login', {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/auth/login`, {
         email,
         password,
       });

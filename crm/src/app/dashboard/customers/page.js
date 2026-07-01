@@ -38,7 +38,7 @@ export default function CustomersPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`http://localhost:4000/api/crm/customers?${buildQueryString()}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers?${buildQueryString()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -62,7 +62,7 @@ export default function CustomersPage() {
       try {
         const token = localStorage.getItem('crm_token');
         const qs = buildQueryString().replace(/page=\d+&?/, ''); // remove page for count
-        const res = await axios.get(`http://localhost:4000/api/crm/customers/preview?${qs}`, {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers/preview?${qs}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success) {
@@ -94,7 +94,7 @@ export default function CustomersPage() {
   const handleRowClick = async (customerId) => {
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`http://localhost:4000/api/crm/customers/${customerId}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers/${customerId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {

@@ -13,7 +13,7 @@ export default function DashboardHome() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('crm_token');
-      const res = await axios.get('http://localhost:4000/api/crm/dashboard-stats', {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/dashboard-stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -34,7 +34,7 @@ export default function DashboardHome() {
     setRecomputing(true);
     try {
       const token = localStorage.getItem('crm_token');
-      await axios.post('http://localhost:4000/api/crm/recompute', {}, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/recompute`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Analytics engine started in the background. Check back in a few minutes.');
