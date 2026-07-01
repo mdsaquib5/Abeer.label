@@ -7,8 +7,8 @@ import "./responsive.css";
 import AuthInit from "@/components/layout/AuthInit";
 
 export const metadata = {
-  title: "ABEER.LABEL – Dashboard",
-  description: "Abeer.label | Dashboard",
+  title: "ABEER.LABEL – Admin Dashboard",
+  description: "Abeer.label | Admin Dashboard",
 };
 
 export default function RootLayout({ children }) {
