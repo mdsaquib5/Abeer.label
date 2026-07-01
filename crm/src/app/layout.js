@@ -1,4 +1,5 @@
 import { outfit, sacramento, cinzel, khand } from "../fonts/font";
+import "./layout.css";
 import "./globals.css";
 
 export const metadata = {

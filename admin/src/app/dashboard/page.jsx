@@ -19,7 +19,7 @@ export default function DashboardOverview() {
     const { products, pagination: productPagination, loadProducts } = useProductStore();
     const { orders, loadOrders } = useOrderStore();
     const { blogs, pagination: blogPagination, loadBlogs } = useBlogStore();
-    
+
     const [totalCustomers, setTotalCustomers] = useState("...");
 
     useEffect(() => {
@@ -47,10 +47,10 @@ export default function DashboardOverview() {
     const totalProducts = productPagination?.total || products.length || 0;
     const totalOrders = orders.length || 0;
     const totalBlogs = blogPagination?.total || blogs.length || 0;
-    
+
     // Revenue logic: sum of all order totalAmounts (if available)
     const totalRevenue = orders.reduce((acc, order) => acc + (order.totalAmount || 0), 0);
-    
+
     // Calculate pending COD orders
     const codPending = orders.filter(order => order.paymentStatus === "Pending").length || 0;
 
