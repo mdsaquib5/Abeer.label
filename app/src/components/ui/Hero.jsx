@@ -43,7 +43,7 @@ const slides = [
         objectPosition: '100% 80%',
         tagline: 'Abeer.Label',
         mainHeading: 'Radiant Luxury',
-        title: 'The Luminous Noor Collection',
+        title: 'The Luminous Noor Set',
         description: 'Illuminate your wardrobe with the Noor Kurta. Soft feminine luxury defined by exquisite handwork and premium, sustainable fabrics.'
     }
 ];

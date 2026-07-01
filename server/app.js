@@ -8,14 +8,16 @@ import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/order.js';
 import blogRoutes from './routes/blog.js';
 import categoryRoutes from './routes/category.js';
-
+import crmRoutes from './routes/crm/index.js';
 const app = express();
 
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     process.env.ADMIN_URL,
+    process.env.CRM_URL,
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://localhost:3002',
 ].filter(Boolean);
 
 app.use(cors({
@@ -50,7 +52,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/categories', categoryRoutes);
-
+app.use('/api/crm', crmRoutes);
 // Root route
 app.get('/', (req, res) => {
     const port = process.env.PORT || 4000;
