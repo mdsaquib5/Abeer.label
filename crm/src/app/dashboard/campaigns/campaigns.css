@@ -13,12 +13,13 @@
 .campaigns-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--primary);
+  font-family: var(--font-cinzel);
 }
 
 .create-btn {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--primary);
+  color: var(--secondary);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-weight: 500;
@@ -28,7 +29,7 @@
 }
 
 .create-btn:hover {
-  background-color: #2563eb;
+  background-color: var(--accent);
 }
 
 .campaigns-grid {
@@ -38,10 +39,11 @@
 }
 
 .campaign-card {
-  background: white;
+  background: var(--white);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--secondary);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -56,15 +58,15 @@
 .campaign-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--primary);
   margin-bottom: 0.25rem;
 }
 
 .campaign-code {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--accent);
   font-family: monospace;
-  background: #f1f5f9;
+  background: var(--secondary);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   display: inline-block;
@@ -110,8 +112,8 @@
 }
 
 .send-btn {
-  background-color: #10b981;
-  color: white;
+  background-color: var(--primary);
+  color: var(--secondary);
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-weight: 500;
@@ -121,7 +123,7 @@
 }
 
 .send-btn:hover {
-  background-color: #059669;
+  background-color: var(--accent);
 }
 
 .send-btn:disabled {

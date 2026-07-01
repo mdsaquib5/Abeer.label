@@ -13,13 +13,14 @@
 .home-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--primary);
+  font-family: var(--font-cinzel);
 }
 
 .recompute-btn {
-  background-color: white;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text-light);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-weight: 500;
@@ -30,8 +31,8 @@
 }
 
 .recompute-btn:hover:not(:disabled) {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
+  background-color: var(--secondary);
+  border-color: var(--primary);
 }
 
 .recompute-btn:disabled {
@@ -55,10 +56,11 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--white);
   padding: 1.5rem;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--secondary);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -76,14 +78,14 @@
 
 .stat-info p {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--accent);
   margin-bottom: 0.25rem;
 }
 
 .stat-info h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--primary);
 }
 
 .charts-area {
@@ -93,21 +95,23 @@
 }
 
 .chart-card {
-  background: white;
+  background: var(--white);
   padding: 1.5rem;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--secondary);
 }
 
 .chart-card h3 {
   font-size: 1.125rem;
-  color: #0f172a;
+  color: var(--primary);
   margin-bottom: 1.5rem;
+  font-family: var(--font-cinzel);
 }
 
 .placeholder-chart {
-  background-color: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  background-color: var(--light-bg);
+  border: 1px dashed var(--secondary);
   border-radius: 0.5rem;
   padding: 2rem;
   text-align: center;

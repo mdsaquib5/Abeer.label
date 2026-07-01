@@ -22,11 +22,12 @@
 
 .filter-header h3 {
   font-size: 1.125rem;
-  color: #0f172a;
+  color: var(--primary);
+  font-family: var(--font-cinzel);
 }
 
 .clear-btn {
-  color: #3b82f6;
+  color: var(--text-light);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -58,7 +59,7 @@
 }
 
 .filter-group input:focus, .filter-group select:focus {
-  border-color: #3b82f6;
+  border-color: var(--primary);
 }
 
 .filter-actions {
@@ -93,16 +94,17 @@
 .customers-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--primary);
+  font-family: var(--font-cinzel);
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  background: white;
+  background: var(--white);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--secondary);
   width: 300px;
 }
 
@@ -124,11 +126,11 @@
 }
 
 .customers-table th {
-  background-color: #f8fafc;
+  background-color: var(--secondary);
   padding: 1rem;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 1px solid #e2e8f0;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border);
 }
 
 .customers-table td {
@@ -138,7 +140,7 @@
 }
 
 .customers-table tbody tr:hover {
-  background-color: #f1f5f9;
+  background-color: var(--light-bg);
   cursor: pointer;
 }
 
@@ -175,7 +177,7 @@
 
 .score-bar-fill {
   height: 100%;
-  background-color: #3b82f6;
+  background-color: var(--primary);
 }
 
 .pagination {
@@ -207,7 +209,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(9, 5, 5, 0.4);
   z-index: 100;
   display: flex;
   justify-content: flex-end;
@@ -232,6 +234,8 @@
 
 .drawer-header h2 {
   font-size: 1.25rem;
+  color: var(--primary);
+  font-family: var(--font-cinzel);
 }
 
 .close-btn {
