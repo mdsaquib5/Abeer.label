@@ -1,5 +1,3 @@
-// Dynamic Customer Scoring Configuration (0 - 100)
-// This file allows adjusting weights without touching the business logic.
 
 export const SCORING_WEIGHTS = {
     MAX_PURCHASE: 30,

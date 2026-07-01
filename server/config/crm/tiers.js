@@ -13,5 +13,5 @@ export const calculateValueTier = (totalSpend) => {
             return tier.name;
         }
     }
-    return 'Platinum'; // Fallback
+    return 'Platinum';
 };

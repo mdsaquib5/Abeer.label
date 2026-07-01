@@ -1,6 +1,3 @@
-// Dynamic Segmentation Rules Configuration
-// Each rule takes the computed customerAnalytics doc and returns true/false if they belong in the segment.
-
 export const SEGMENTS = [
     {
         key: 'VIP Customers',
