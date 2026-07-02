@@ -50,7 +50,7 @@ export default function Login() {
                             <p className="admin-auth-subtitle">
                                 Good to see you again. Sign in to manage your Abeer Label CRM.
                             </p>
-                            {error && <div className="error-alert" style={{ marginTop: '10px' }}>{error}</div>}
+                            {error && <div className="error-alert">{error}</div>}
                         </div>
 
                         <form className="admin-auth-form" onSubmit={handleLogin}>
