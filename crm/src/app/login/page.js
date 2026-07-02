@@ -2,16 +2,17 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { useAuthStore } from '@/store/useAuthStore';
 import { BsShieldLock } from 'react-icons/bs';
 import Link from 'next/link';
 
 export default function Login() {
     const [email, setEmail] = useState('mdsaquib5540@gmail.com');
     const [password, setPassword] = useState('mdsaquib5540');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
     const router = useRouter();
+    
+    // Zustand store
+    const { login, loading, error } = useAuthStore();
 
     // New states for the UI structure
     const [isLogin, setIsLogin] = useState(true);
@@ -22,25 +23,9 @@ export default function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError('');
-        setLoading(true);
-
-        try {
-            // Backend is on port 4000
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/auth/login`, {
-                email,
-                password,
-            });
-
-            if (res.data.success) {
-                localStorage.setItem('crm_token', res.data.token);
-                localStorage.setItem('crm_user', JSON.stringify(res.data.user));
-                router.push('/dashboard/customers');
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Check your credentials.');
-        } finally {
-            setLoading(false);
+        const { success } = await login(email, password);
+        if (success) {
+            router.push('/dashboard/customers');
         }
     };
 

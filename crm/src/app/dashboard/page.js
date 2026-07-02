@@ -1,56 +1,26 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useEffect } from 'react';
+import { useDashboardStore } from '@/store/useDashboardStore';
+import { formatCurrency } from '@/utils/formatters';
 import { FiUsers, FiTrendingUp, FiActivity, FiTag, FiRefreshCw, FiSend } from 'react-icons/fi';
 import DashboardTitles from '@/components/shared/DashboardTitle';
+import Loader from '@/components/shared/Loader';
 import Stats from '@/components/shared/Stats';
 
 export default function DashboardHome() {
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [recomputing, setRecomputing] = useState(false);
-
-    const fetchStats = async () => {
-        try {
-            const token = localStorage.getItem('crm_token');
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/dashboard-stats`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.success) {
-                setStats(res.data.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch stats");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { stats, loading, recomputing, fetchStats, triggerRecompute } = useDashboardStore();
 
     useEffect(() => {
         fetchStats();
-    }, []);
+    }, [fetchStats]);
 
     const handleRecompute = async () => {
-        setRecomputing(true);
-        try {
-            const token = localStorage.getItem('crm_token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/recompute`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            alert('Analytics engine started in the background. Check back in a few minutes.');
-        } catch (error) {
-            alert('Failed to trigger engine.');
-        } finally {
-            setRecomputing(false);
-        }
+        const { message } = await triggerRecompute();
+        alert(message);
     };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
-    };
-
-    if (loading) return <div style={{ padding: '2rem' }}>Loading dashboard...</div>;
+    if (loading) return <div style={{ padding: '2rem' }}><Loader text="Loading dashboard..." /></div>;
     if (!stats) return <div style={{ padding: '2rem' }}>Failed to load statistics.</div>;
 
     const statsData = [

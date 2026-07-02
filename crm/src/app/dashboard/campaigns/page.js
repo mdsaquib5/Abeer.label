@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useCampaignStore } from '@/store/useCampaignStore';
 import { FiPlus, FiX } from 'react-icons/fi';
 import CampaignsCard from '@/components/shared/CampaignsCard';
 import DashboardTitles from '@/components/shared/DashboardTitle';
+import Loader from '@/components/shared/Loader';
 
 export default function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { campaigns, loading, fetchCampaigns, createNewCampaign, dispatchCampaign, checkCampaignStatus } = useCampaignStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -23,26 +23,9 @@ export default function CampaignsPage() {
     channels: []
   });
 
-  const fetchCampaigns = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        setCampaigns(res.data.data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch campaigns", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchCampaigns();
-  }, []);
+  }, [fetchCampaigns]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,55 +44,31 @@ export default function CampaignsPage() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    try {
-      const token = localStorage.getItem('crm_token');
-      // For demo, we apply the targetSegment as a filter snapshot
-      const payload = {
-        ...formData,
-        filterSnapshot: formData.targetSegment ? { segments: formData.targetSegment } : {}
-      };
+    const payload = {
+      ...formData,
+      filterSnapshot: formData.targetSegment ? { segments: formData.targetSegment } : {}
+    };
 
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns`, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (res.data.success) {
-        setIsModalOpen(false);
-        fetchCampaigns();
-      }
-    } catch (error) {
-      alert("Failed to create campaign");
-      console.error(error);
+    const { success, message } = await createNewCampaign(payload);
+    if (success) {
+      setIsModalOpen(false);
+    } else {
+      alert(message || "Failed to create campaign");
     }
   };
 
   const handleSend = async (id) => {
     if (!confirm("Are you sure you want to dispatch this campaign to the queue?")) return;
-
-    try {
-      const token = localStorage.getItem('crm_token');
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns/${id}/send`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert(res.data.message);
-      fetchCampaigns();
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to dispatch campaign");
-    }
+    const { message, success } = await dispatchCampaign(id);
+    alert(message || (success ? "Success" : "Failed to dispatch campaign"));
   };
 
   const checkStatus = async (id) => {
-    try {
-      const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/campaigns/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        const { stats } = res.data.data;
-        alert(`Sent: ${stats.sent || 0}\nQueued: ${stats.queued || 0}\nFailed: ${stats.failed || 0}`);
-      }
-    } catch (error) {
-      alert("Failed to fetch stats");
+    const { success, stats, message } = await checkCampaignStatus(id);
+    if (success) {
+      alert(`Sent: ${stats.sent || 0}\nQueued: ${stats.queued || 0}\nFailed: ${stats.failed || 0}`);
+    } else {
+      alert(message || "Failed to fetch stats");
     }
   };
 
@@ -123,7 +82,7 @@ export default function CampaignsPage() {
       </div>
       <div className='dashboard-wrapper dashboard-content'>
         {loading ? (
-          <p>Loading campaigns...</p>
+          <Loader text="Loading campaigns..." />
         ) : (
           <div className="campaigns-grid">
             {campaigns.map(c => (

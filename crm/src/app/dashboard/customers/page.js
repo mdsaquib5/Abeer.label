@@ -1,118 +1,46 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useCustomerStore } from '@/store/useCustomerStore';
+import { formatCurrency } from '@/utils/formatters';
 import DashboardTitles from '@/components/shared/DashboardTitle';
 import CutomerFilter from '@/components/shared/CutomerFilter';
 import CustomerDetails from '@/components/shared/CustomerDetails';
+import Loader from '@/components/shared/Loader';
 import { FiFilter } from 'react-icons/fi';
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const { 
+    customers, loading, page, totalPages, setPage, 
+    selectedCustomer, clearSelectedCustomer, fetchCustomerDetails,
+    filters, setFilters, clearFilters, previewCount, fetchCustomers, fetchPreviewCount
+  } = useCustomerStore();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // Filter States
-  const [filters, setFilters] = useState({
-    search: '',
-    inactiveDays: '',
-    minSpend: '',
-    maxSpend: '',
-    minOrders: '',
-    tier: '',
-    city: '',
-    segment: ''
-  });
-  const [previewCount, setPreviewCount] = useState(null);
-
   const hasActiveFilters = Object.values(filters).some(val => val !== '');
-
-  const buildQueryString = () => {
-    const params = new URLSearchParams();
-    params.append('page', page);
-    Object.keys(filters).forEach(key => {
-      if (filters[key]) params.append(key, filters[key]);
-    });
-    return params.toString();
-  };
-
-  const fetchCustomers = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers?${buildQueryString()}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        setCustomers(res.data.data);
-        setTotalPages(res.data.pagination.totalPages);
-      }
-    } catch (error) {
-      console.error("Failed to fetch customers", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchCustomers();
-  }, [page]);
+  }, [page, fetchCustomers]);
 
   useEffect(() => {
     // Debounce preview fetch
-    const timeoutId = setTimeout(async () => {
-      try {
-        const token = localStorage.getItem('crm_token');
-        const qs = buildQueryString().replace(/page=\d+&?/, ''); // remove page for count
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers/preview?${qs}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.data.success) {
-          setPreviewCount(res.data.count);
-        }
-      } catch (error) {
-        console.error("Failed to fetch preview count", error);
-      }
+    const timeoutId = setTimeout(() => {
+      fetchPreviewCount();
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [filters]);
+  }, [filters, fetchPreviewCount]);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
-    setPage(1); // Reset to first page on filter change
   };
 
   const handleApplyFilters = () => {
     fetchCustomers();
   };
 
-  const clearFilters = () => {
-    setFilters({
-      search: '', inactiveDays: '', minSpend: '', maxSpend: '', minOrders: '', tier: '', city: '', segment: ''
-    });
-    setPage(1);
-  };
-
-  const handleRowClick = async (customerId) => {
-    try {
-      const token = localStorage.getItem('crm_token');
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/crm/customers/${customerId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        setSelectedCustomer(res.data.data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch customer details", error);
-    }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+  const handleRowClick = (customerId) => {
+    fetchCustomerDetails(customerId);
   };
 
   const renderPaginationNumbers = () => {
@@ -196,7 +124,7 @@ export default function CustomersPage() {
 
             <div className="table-container">
               {loading ? (
-                <p>Loading customers data...</p>
+                <Loader text="Loading customers data..." />
               ) : (
                 <table className="customers-table">
                   <thead>
@@ -278,11 +206,11 @@ export default function CustomersPage() {
       </div>
 
       {/* Re-integrated Customer Detail Sidebar Component */}
-      <CustomerDetails 
-        selectedCustomer={selectedCustomer} 
-        onClose={() => setSelectedCustomer(null)} 
-        formatCurrency={formatCurrency} 
-        formatDate={formatDate} 
+      <CustomerDetails
+        selectedCustomer={selectedCustomer}
+        onClose={clearSelectedCustomer}
+        formatCurrency={formatCurrency}
+        formatDate={formatDate}
       />
     </div>
   );
