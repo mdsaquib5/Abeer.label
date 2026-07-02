@@ -11,7 +11,7 @@ export default function Login() {
     const [email, setEmail] = useState('mdsaquib5540@gmail.com');
     const [password, setPassword] = useState('mdsaquib5540');
     const router = useRouter();
-    
+
     // Zustand store
     const { login, loading, error } = useAuthStore();
 
