@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 import { BsShieldLock } from 'react-icons/bs';
 import Link from 'next/link';
 
@@ -31,7 +32,7 @@ export default function Login() {
 
     const handleSignupSubmit = (e) => {
         e.preventDefault();
-        alert("CRM Access Request Submitted!");
+        toast.success("CRM Access Request Submitted!");
     };
 
     return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCampaignStore } from '@/store/useCampaignStore';
+import { toast } from 'sonner';
 import { FiPlus, FiX } from 'react-icons/fi';
 import CampaignsCard from '@/components/shared/CampaignsCard';
 import DashboardTitles from '@/components/shared/DashboardTitle';
@@ -52,23 +53,28 @@ export default function CampaignsPage() {
     const { success, message } = await createNewCampaign(payload);
     if (success) {
       setIsModalOpen(false);
+      toast.success("Campaign created successfully!");
     } else {
-      alert(message || "Failed to create campaign");
+      toast.error(message || "Failed to create campaign");
     }
   };
 
   const handleSend = async (id) => {
     if (!confirm("Are you sure you want to dispatch this campaign to the queue?")) return;
     const { message, success } = await dispatchCampaign(id);
-    alert(message || (success ? "Success" : "Failed to dispatch campaign"));
+    if (success) {
+      toast.success(message || "Success");
+    } else {
+      toast.error(message || "Failed to dispatch campaign");
+    }
   };
 
   const checkStatus = async (id) => {
     const { success, stats, message } = await checkCampaignStatus(id);
     if (success) {
-      alert(`Sent: ${stats.sent || 0}\nQueued: ${stats.queued || 0}\nFailed: ${stats.failed || 0}`);
+      toast.info(`Sent: ${stats.sent || 0} | Queued: ${stats.queued || 0} | Failed: ${stats.failed || 0}`);
     } else {
-      alert(message || "Failed to fetch stats");
+      toast.error(message || "Failed to fetch stats");
     }
   };
 

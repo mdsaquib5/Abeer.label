@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { formatCurrency } from '@/utils/formatters';
+import { toast } from 'sonner';
 import { FiUsers, FiTrendingUp, FiActivity, FiTag, FiRefreshCw, FiSend } from 'react-icons/fi';
 import DashboardTitles from '@/components/shared/DashboardTitle';
 import Loader from '@/components/shared/Loader';
@@ -16,8 +17,12 @@ export default function DashboardHome() {
     }, [fetchStats]);
 
     const handleRecompute = async () => {
-        const { message } = await triggerRecompute();
-        alert(message);
+        const { message, success } = await triggerRecompute();
+        if (success) {
+            toast.success(message);
+        } else {
+            toast.error(message);
+        }
     };
 
     if (loading) return <div style={{ padding: '2rem' }}><Loader text="Loading dashboard..." /></div>;
