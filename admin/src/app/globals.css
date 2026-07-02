@@ -137,7 +137,7 @@
     justify-content: space-between;
     width: 100%;
     padding: 10px;
-    background-color: #e74c3c1a;
+    background-color: #e74c3c38;
     color: #e74c3c;
     font-size: 14px;
     font-weight: 300;
@@ -273,7 +273,7 @@
 .glass-panel {
     background: linear-gradient(135deg, #ffffff0d 0%, #ffffff03 100%);
     backdrop-filter: blur(10px);
-    border: 1px solid #975e252e;
+    border: 1px solid #dfa16940;
     padding: 20px;
     display: flex;
     flex-direction: column;

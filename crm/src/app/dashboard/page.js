@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiUsers, FiTrendingUp, FiActivity, FiTag, FiRefreshCw } from 'react-icons/fi';
+import { FiUsers, FiTrendingUp, FiActivity, FiTag, FiRefreshCw, FiSend } from 'react-icons/fi';
 import DashboardTitles from '@/components/shared/DashboardTitle';
 import Stats from '@/components/shared/Stats';
 
@@ -60,19 +60,44 @@ export default function DashboardHome() {
             icon: <FiUsers />
         },
         {
-            title: "Total Revenue Monitored",
+            title: "Total Revenue",
             number: formatCurrency(stats.totalRevenue),
             icon: <FiTrendingUp />
         },
         {
-            title: "Active vs Inactive",
-            number: `${stats.activeCount} / ${stats.inactiveCount}`,
+            title: "Active Customers",
+            number: stats.activeCount,
             icon: <FiActivity />
         },
         {
-            title: "Active Campaigns",
+            title: "Inactive Customers",
+            number: stats.inactiveCount,
+            icon: <FiUsers />
+        },
+        {
+            title: "Total Campaigns",
             number: stats.campaignCount,
             icon: <FiTag />
+        },
+        {
+            title: "Running Campaigns",
+            number: stats.runningCampaignCount,
+            icon: <FiRefreshCw />
+        },
+        {
+            title: "Completed Campaigns",
+            number: stats.completedCampaignCount,
+            icon: <FiTag />
+        },
+        {
+            title: "Expired Campaigns",
+            number: stats.expiredCampaignCount,
+            icon: <FiTag />
+        },
+        {
+            title: "Campaigns Sent",
+            number: stats.totalMessagesSent,
+            icon: <FiSend />
         }
     ];
 
@@ -80,12 +105,12 @@ export default function DashboardHome() {
         <div className="dashboard-page">
             <div className="dashboard-header">
                 <DashboardTitles title="CRM Dashboard" />
-                <button className="recompute-btn" onClick={handleRecompute} disabled={recomputing}>
+                <button className="recompute-btn crm-btn" onClick={handleRecompute} disabled={recomputing}>
                     <FiRefreshCw className={recomputing ? 'spin' : ''} />
                     {recomputing ? 'Triggering...' : 'Run Analytics Engine'}
                 </button>
             </div>
-            <div className='dashboard-wrapper'>
+            <div className='dashboard-wrapper dashboard-content'>
 
                 <div className="dashbaord-stats-grid">
                     {statsData.map((item, index) => (
@@ -93,15 +118,17 @@ export default function DashboardHome() {
                     ))}
                 </div>
 
-                <div className="charts-area">
-                    <div className="chart-card">
-                        <h3>Customer Score Distribution</h3>
-                        <div className="placeholder-chart">
-                            Average Score: <strong>{stats.avgScore} / 100</strong>
-                            <div className="score-meter">
+                <div className="stat-card">
+                    <div>
+                        <div className="stats-details">
+                            <div className="stats-title">Customer Score Distribution</div>
+                            <div className="stat-number" style={{ fontSize: '1.5rem', marginTop: '0.5rem' }}>
+                                Average Score: {stats.avgScore} / 100
+                            </div>
+                            <div className="score-meter" style={{ marginTop: '1rem' }}>
                                 <div className="score-fill" style={{ width: `${stats.avgScore}%`, backgroundColor: stats.avgScore > 60 ? '#16a34a' : '#eab308' }}></div>
                             </div>
-                            <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '1rem' }}>
+                            <p style={{ fontSize: '0.875rem', color: 'var(--text-light)', marginTop: '1rem', opacity: 0.8 }}>
                                 This score aggregates Purchase Frequency, Spend, Activity, and Returns across your customer base.
                             </p>
                         </div>

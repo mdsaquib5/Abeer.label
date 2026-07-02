@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiPlus, FiSend, FiX, FiBarChart2 } from 'react-icons/fi';
-import './campaigns.css';
+import { FiPlus, FiX } from 'react-icons/fi';
+import CampaignsCard from '@/components/shared/CampaignsCard';
+import DashboardTitles from '@/components/shared/DashboardTitle';
 
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState([]);
@@ -113,89 +114,53 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className="campaigns-layout">
-      <div className="campaigns-header">
-        <h1>Coupon Campaigns</h1>
-        <button className="create-btn" onClick={() => setIsModalOpen(true)}>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <DashboardTitles title="Coupon Campaigns" />
+        <button className="crm-btn" onClick={() => setIsModalOpen(true)}>
           <FiPlus /> New Campaign
         </button>
       </div>
+      <div className='dashboard-content'>
+        {loading ? (
+          <p>Loading campaigns...</p>
+        ) : (
+          <div className="campaigns-grid">
+            {campaigns.map(c => (
+              <CampaignsCard
+                key={c._id}
+                campaign={c}
+                handleSend={handleSend}
+                checkStatus={checkStatus}
+              />
+            ))}
 
-      {loading ? (
-        <p>Loading campaigns...</p>
-      ) : (
-        <div className="campaigns-grid">
-          {campaigns.map(c => (
-            <div className="campaign-card" key={c._id}>
-              <div className="campaign-card-header">
-                <div>
-                  <div className="campaign-title">{c.title}</div>
-                  <div className="campaign-code">{c.couponCode}</div>
-                </div>
-                <span className={`status-badge status-${c.status}`}>{c.status}</span>
-              </div>
+            {campaigns.length === 0 && <p>No campaigns found.</p>}
+          </div>
+        )}
+      </div>
 
-              <div className="campaign-details">
-                <div>
-                  <span className="detail-lbl">Discount: </span>
-                  <span className="detail-val">
-                    {c.discountType === 'percent' ? `${c.discount}%` : `₹${c.discount}`}
-                  </span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Min Order: </span>
-                  <span className="detail-val">₹{c.minimumOrder}</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Target: </span>
-                  <span className="detail-val">{c.targetSegment || 'All'}</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Expires: </span>
-                  <span className="detail-val">{new Date(c.validTo).toLocaleDateString()}</span>
-                </div>
-              </div>
 
-              <div className="campaign-actions">
-                <button className="stats-btn" onClick={() => checkStatus(c._id)}>
-                  <FiBarChart2 style={{ marginRight: '0.25rem' }} /> Stats
-                </button>
-                <button
-                  className="send-btn"
-                  onClick={() => handleSend(c._id)}
-                  disabled={c.status === 'running' || c.status === 'completed' || c.status === 'expired'}
-                >
-                  <FiSend /> Send
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {campaigns.length === 0 && <p>No campaigns found.</p>}
-        </div>
-      )}
-
-      {/* Create Modal */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
               <h2>Create Campaign</h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ fontSize: '1.5rem', color: '#64748b' }}><FiX /></button>
+              <button type="button" className="close-btn" onClick={() => setIsModalOpen(false)}><FiX /></button>
             </div>
 
-            <form onSubmit={handleCreate}>
-              <div className="form-group">
+            <form onSubmit={handleCreate} className="modal-form">
+              <div className="modal-field">
                 <label>Campaign Title</label>
                 <input required type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. VIP Diwali Sale" />
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-row">
+                <div className="modal-field flex-1">
                   <label>Coupon Code</label>
-                  <input required type="text" name="couponCode" value={formData.couponCode} onChange={handleInputChange} placeholder="VIP50" style={{ textTransform: 'uppercase' }} />
+                  <input required type="text" name="couponCode" value={formData.couponCode} onChange={handleInputChange} placeholder="VIP50" className="uppercase-input" />
                 </div>
-                <div className="form-group" style={{ flex: 1 }}>
+                <div className="modal-field flex-1">
                   <label>Target Segment</label>
                   <select name="targetSegment" value={formData.targetSegment} onChange={handleInputChange}>
                     <option value="">All Customers</option>
@@ -206,12 +171,12 @@ export default function CampaignsPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-row">
+                <div className="modal-field flex-1">
                   <label>Discount Amount</label>
                   <input required type="number" name="discount" value={formData.discount} onChange={handleInputChange} />
                 </div>
-                <div className="form-group" style={{ flex: 1 }}>
+                <div className="modal-field flex-1">
                   <label>Type</label>
                   <select name="discountType" value={formData.discountType} onChange={handleInputChange}>
                     <option value="flat">Flat (₹)</option>
@@ -220,29 +185,41 @@ export default function CampaignsPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-row">
+                <div className="modal-field flex-1">
                   <label>Valid From</label>
                   <input required type="date" name="validFrom" value={formData.validFrom} onChange={handleInputChange} />
                 </div>
-                <div className="form-group" style={{ flex: 1 }}>
+                <div className="modal-field flex-1">
                   <label>Valid To</label>
                   <input required type="date" name="validTo" value={formData.validTo} onChange={handleInputChange} />
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="modal-field">
                 <label>Send Channels</label>
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'normal' }}>
-                    <input type="checkbox" checked={formData.channels.includes('email')} onChange={() => handleCheckboxChange('email')} /> Email
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'normal' }}>
-                    <input type="checkbox" checked={formData.channels.includes('whatsapp')} onChange={() => handleCheckboxChange('whatsapp')} /> WhatsApp
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'normal' }}>
-                    <input type="checkbox" checked={formData.channels.includes('sms')} onChange={() => handleCheckboxChange('sms')} /> SMS
-                  </label>
+                <div className="channel-btn-group">
+                  <button 
+                    type="button" 
+                    className={`channel-btn ${formData.channels.includes('email') ? 'active' : ''}`} 
+                    onClick={() => handleCheckboxChange('email')}
+                  >
+                    Email
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`channel-btn ${formData.channels.includes('whatsapp') ? 'active' : ''}`} 
+                    onClick={() => handleCheckboxChange('whatsapp')}
+                  >
+                    WhatsApp
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`channel-btn ${formData.channels.includes('sms') ? 'active' : ''}`} 
+                    onClick={() => handleCheckboxChange('sms')}
+                  >
+                    SMS
+                  </button>
                 </div>
               </div>
 
