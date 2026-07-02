@@ -121,7 +121,7 @@ export default function CampaignsPage() {
           <FiPlus /> New Campaign
         </button>
       </div>
-      <div className='dashboard-content'>
+      <div className='dashboard-wrapper dashboard-content'>
         {loading ? (
           <p>Loading campaigns...</p>
         ) : (
@@ -199,23 +199,23 @@ export default function CampaignsPage() {
               <div className="modal-field">
                 <label>Send Channels</label>
                 <div className="channel-btn-group">
-                  <button 
-                    type="button" 
-                    className={`channel-btn ${formData.channels.includes('email') ? 'active' : ''}`} 
+                  <button
+                    type="button"
+                    className={`channel-btn ${formData.channels.includes('email') ? 'active' : ''}`}
                     onClick={() => handleCheckboxChange('email')}
                   >
                     Email
                   </button>
-                  <button 
-                    type="button" 
-                    className={`channel-btn ${formData.channels.includes('whatsapp') ? 'active' : ''}`} 
+                  <button
+                    type="button"
+                    className={`channel-btn ${formData.channels.includes('whatsapp') ? 'active' : ''}`}
                     onClick={() => handleCheckboxChange('whatsapp')}
                   >
                     WhatsApp
                   </button>
-                  <button 
-                    type="button" 
-                    className={`channel-btn ${formData.channels.includes('sms') ? 'active' : ''}`} 
+                  <button
+                    type="button"
+                    className={`channel-btn ${formData.channels.includes('sms') ? 'active' : ''}`}
                     onClick={() => handleCheckboxChange('sms')}
                   >
                     SMS

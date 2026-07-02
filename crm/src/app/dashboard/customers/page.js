@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DashboardTitles from '@/components/shared/DashboardTitle';
 import CutomerFilter from '@/components/shared/CutomerFilter';
+import CustomerDetails from '@/components/shared/CustomerDetails';
 import { FiFilter } from 'react-icons/fi';
 
 export default function CustomersPage() {
@@ -275,6 +276,14 @@ export default function CustomersPage() {
           </div>
         </div>
       </div>
+
+      {/* Re-integrated Customer Detail Sidebar Component */}
+      <CustomerDetails 
+        selectedCustomer={selectedCustomer} 
+        onClose={() => setSelectedCustomer(null)} 
+        formatCurrency={formatCurrency} 
+        formatDate={formatDate} 
+      />
     </div>
   );
 }
